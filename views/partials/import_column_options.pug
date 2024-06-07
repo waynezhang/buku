@@ -1,0 +1,15 @@
+if .error_message
+  p
+    small.error {{.error_message}}
+if .columns
+  p
+    for _ in .presets
+      label(for="{{.}}") {{.}}
+      select(
+        name="{{.}}"
+      )
+        for _ in $.columns
+          option(
+            value="{{.}}"
+          ) {{.}}
+      hr

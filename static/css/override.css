@@ -1,0 +1,118 @@
+a:visited {
+  color: #00e;
+}
+
+.error {
+  color: #e33;
+  font-size: 0.8rem;
+}
+
+.info_banner mark {
+  margin: 1rem 0rem;
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
+  display: block;
+}
+
+button,
+input[type=file],
+option {
+  padding: 4px 8px;
+  font-size: 0.8rem;
+}
+
+button.destructive {
+  color: #e33;
+}
+
+.stat {
+  margin: 5rem auto;
+  font-size: 1.5rem;
+  color: #999;
+}
+
+.stat .reading_count a,
+.stat .toread_count a {
+  margin: 0 2rem;
+  color: #555;
+}
+
+.stat .reading_count a:hover,
+.stat .toread_count a:hover {
+  color: #111;
+}
+
+.stat .reading_count {
+  font-size: 4rem;
+}
+
+.stat .toread_count {
+  font-size: 2rem;
+}
+
+.history {
+  color: #666;
+}
+
+.history .year {
+  width: 15%;
+  display: inline-block;
+}
+
+.history .count {
+  margin-left: 0.5rem;
+}
+
+.history meter {
+  width: 60%;
+}
+
+meter {
+  -webkit-appearance: none;
+}
+
+meter::-webkit-meter-bar {
+  background: transparent;
+}
+
+meter::-webkit-meter-optimum-value {
+  background: #ccc;
+}
+
+.tag {
+  font-size: 0.8em;
+  background-color: #f9f9f9;
+  padding: 2px 4px;
+  margin: 0 4px;
+}
+
+.tag.read {
+  display: none;
+}
+
+.tag.to-read {
+  color: #e33;
+}
+
+.tag.reading {
+  color: #5c8;
+}
+
+form label,
+.book_info .attr {
+  color: #999;
+  font-size: 80%;
+  width: 5rem;
+  display: inline-block;
+}
+
+input[type=text] {
+  width: 16rem;
+  font-size: 1rem;
+}
+
+.book_edit textarea {
+  width: 20rem;
+  height: 10rem;
+  font-size: 1rem;
+}

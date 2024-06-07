@@ -1,0 +1,31 @@
+h5 Admin
+
+section
+  h6 Data Management
+  nav
+    ul
+      li
+        a(href="/page/book/all#") Books
+      li
+        a(href="/page/author/all#") Authors
+      li
+        a(href="/page/series/all#") Series
+
+section
+  h6 Import/Export
+  nav
+    ul
+      li
+        a(href="/page/import#") Import
+
+section
+  h6 Danger Zone
+  nav 
+    ul
+      li
+        button.destructive(
+          hx-post="/page/admin/nuke"
+          hx-confirm="Ar you sure to nuke the database?"
+          hx-target="#message"
+        ) Delete all data
+        p#message

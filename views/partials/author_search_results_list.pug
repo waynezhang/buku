@@ -1,0 +1,5 @@
+small {{.authors | len}} found.
+ul
+  for _ in .authors
+    li
+      a(href="/page/author/{{.}}") {{.}}

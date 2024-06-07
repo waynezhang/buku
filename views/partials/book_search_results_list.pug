@@ -1,0 +1,6 @@
+include ../mixin/mixin
+
+small {{.books | len}} found.
+ul
+  for _ in .books
+    +book_item_with_tag(.)

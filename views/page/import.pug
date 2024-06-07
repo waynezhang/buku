@@ -1,0 +1,35 @@
+h5 Import
+
+section
+  h6
+  form(
+    hx-encoding="multipart/form-data"
+  )
+    p
+      label(for="file") CSV file
+      input(
+        type="file"
+        name="file"
+        id="file"
+        accept=".csv"
+      )
+      label(for="delimiter") Delimiter
+      select(name="delimiter")
+        option(value=",") ,
+        option(value=";") ;
+    p
+      button(
+        hx-post="/page/import/select_columns"
+        hx-target="#message"
+        type="submit"
+      ) Read Columns
+      button(
+        hx-post="/page/import"
+        hx-target="#message"
+        type="submit"
+      ) Import
+    p#message
+
+if .results
+  section
+    h5 aa

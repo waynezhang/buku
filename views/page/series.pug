@@ -1,0 +1,17 @@
+include ../mixin/mixin
+
+h5 {{.name}}
+
+section
+  ul
+    for _ in .books
+      +book_item_with_tag(.)
+
+section
+  p
+    button(
+      hx-post="/page/series/{{.name}}/rename"
+      hx-prompt="New name"
+      hx-target="#message"
+    ) Rename
+  p#message

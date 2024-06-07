@@ -1,0 +1,22 @@
+mixin book_item_line(book)
+  a.title(href="/page/book/{{.ID}}#") {{.Title}}
+  if .Author
+    span /
+    span.author
+      a(href="/page/author/{{.Author}}#") {{.Author}}
+
+mixin book_item(book)
+  li
+    +book_item_line(.)
+
+mixin book_item_with_tag(book)
+  li
+    +book_item_line(.)
+    span(
+      class="tag {{.Status}}"
+    ) &#x23;{{.Status}}
+
+mixin book_list(books)
+  ul.book_list
+    for _ in .books
+      +book_item(.)

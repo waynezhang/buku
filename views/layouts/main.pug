@@ -1,0 +1,31 @@
+doctype html
+html
+  head
+    title buku
+    meta(charset="UTF-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    link(rel="stylesheet" href="//writ.cmcenroe.me/1.0.4/writ.min.css")
+    link(rel="stylesheet" href="/css/override.css")
+    script(src="https://unpkg.com/htmx.org@1.9.12")
+
+  body
+    header
+      h3 buku
+      nav(hx-boost="true" hx-target="main")
+        ul
+          li
+            a(href="/page/home#") Home
+          li
+            a(href="/page/backlog#") Backlog
+          li
+            a(href="/page/admin#") Admin
+          li |
+          li
+            a(href="/page/book/new") New
+    main(hx-boost="true" hx-target="main")
+      | {{embed}}
+
+    footer
+      p 
+        Copyright &copy2024
+        a(href="https://github.com/waynezhang/buku" target="_blank") buku

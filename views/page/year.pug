@@ -1,0 +1,13 @@
+include ../mixin/mixin
+
+h5 {{.year}}
+
+section
+  if .books | len
+    p.info_banner
+      mark Nice! You have finished {{.books | len}} book(s) this year.
+    +book_list(.books)
+    hr
+  else
+    p.info_banner
+      mark You are lazy in this year.

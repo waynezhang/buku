@@ -1,0 +1,17 @@
+h5 Authors
+
+section
+  input(
+    name="name"
+    value="{{.name}}"
+    hx-get="/page/author/search"
+    hx-include="[name='order']"
+    hx-trigger="load, change, keyup delay:200ms changed, change from:#sort_order"
+    hx-target="#search_result"
+  )
+  label Order by name
+  select#sort_order(name="order")
+    option(value="asc") Asc
+    option(value="desc") Desc
+
+section#search_result

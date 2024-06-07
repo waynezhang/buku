@@ -1,0 +1,54 @@
+h5 {{.book.Title}}
+
+section.book_info
+  p
+    span.attr Author
+    span.val
+      a(href="/page/author/{{.book.Author}}") {{.book.Author}}
+    br
+    span.attr Series
+    span.val
+      a(href="/page/series/{{.book.Series}}") {{.book.Series}}
+    br
+    span.attr ISBN
+    span.val {{.book.ISBN}}
+    br
+    span.attr Started
+    span.val {{.book.StartedAt | date_fmt}}
+    br
+    span.attr Finished
+    span.val {{.book.FinishedAt | date_fmt}}
+    br
+    span.attr Created
+    span.val {{.book.CreatedAt | date_fmt}}
+    br
+    span.attr Comments
+    br
+    if .book.Comments
+      span.val {{.book.Comments}}
+
+  p
+    button.destructive(
+      hx-delete="/page/book/{{.book.ID}}"
+      hx-confirm="Are you sure to delete {{.book.Title}}"
+      hx-target="#message"
+    ) Delete
+    if eq .book.Status "reading"
+      button(
+        hx-post="/page/book/{{.book.ID}}/status/to-read"
+        hx-target="#message"
+      ) Stop
+      button(
+        hx-post="/page/book/{{.book.ID}}/status/read"
+        hx-target="#message"
+      ) Finish
+    if eq .book.Status "to-read"
+      button(
+        hx-post="/page/book/{{.book.ID}}/status/reading"
+        hx-target="#message"
+      ) Start
+    a(
+      href="/page/book/{{.book.ID}}/edit#"
+    )
+      button Edit
+  p#message

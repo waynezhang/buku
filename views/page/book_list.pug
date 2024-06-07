@@ -1,0 +1,11 @@
+include ../mixin/mixin
+
+h5 {{.title}} ({{.books | len}})
+
+section
+  if .books | len
+    +book_list(.books)
+    hr
+  else
+    p.info_banner
+      mark Congratulations! You've finished all books! 

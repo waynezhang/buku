@@ -1,0 +1,34 @@
+include ../mixin/mixin
+
+section
+  p.stat
+    span.reading_count
+      a(href="#reading") {{.counts.Reading}}
+    | ongoing,
+    span.toread_count
+      a(href="/page/backlog") {{.counts.ToRead}}
+    | on the list.
+
+section
+  h6#reading Reading
+  if .reading_books | len
+    ul
+      for _ in .reading_books
+        +book_item(.)
+  else
+    p.info_banner
+      mark Let's start reading!
+
+section
+  h6. History
+  p.history
+    if .yearRecords | len
+      for _ in .yearRecords
+        span.year
+          a(href="/page/book/year/{{.Year}}") {{.Year}}
+          small.count ({{.Count}})
+        meter(min="0" max="100" value="{{.Ratio}}")
+        br
+    else
+      p.info_banner
+        mark No reading history yet.
