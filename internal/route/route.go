@@ -47,7 +47,7 @@ func Load(cfg *config.Config, db *gorm.DB) *fiber.App {
 	loadPageAuthorRoutes(f, db)
 	loadPageSeriesRoutes(f, db)
 	loadPageAdminRoutes(f, db)
-	loadPageImportRoutes(f, db)
+	loadPageImportExportRoutes(f, db)
 
 	return f
 }

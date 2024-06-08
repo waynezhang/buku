@@ -33,6 +33,7 @@ const (
 	URL_IMPORT_PAGE                  = "/page/import"
 	URL_IMPORT_RQUEST                = "/page/import"
 	URL_IMPORT_SELECT_COLUMN_REQUEST = "/page/import/select_columns"
+	URL_EXPORT_PAGE                  = "/page/export"
 )
 
 func BuildURLBookView(id uint) string {

@@ -1,6 +1,7 @@
 package route
 
 import (
+	"bytes"
 	"encoding/csv"
 	"slices"
 	"time"
@@ -12,9 +13,22 @@ import (
 	"gorm.io/gorm"
 )
 
-func loadPageImportRoutes(f *fiber.App, db *gorm.DB) {
+const (
+	CSV_COLUMN_Title    = "Title"
+	CSV_COLUMN_Author   = "Author"
+	CSV_COLUMN_Series   = "Series"
+	CSV_COLUMN_ISBN     = "ISBN"
+	CSV_COLUMN_Comments = "Comments"
+	CSV_COLUMN_Started  = "Started"
+	CSV_COLUMN_Finished = "Finished"
+)
+
+func loadPageImportExportRoutes(f *fiber.App, db *gorm.DB) {
 	f.Get(urls.URL_IMPORT_PAGE, func(c *fiber.Ctx) error {
 		return render(c, "page/import", fiber.Map{})
+	})
+	f.Get(urls.URL_EXPORT_PAGE, func(c *fiber.Ctx) error {
+		return handleCSVExportRequest(c, db)
 	})
 	f.Post(urls.URL_IMPORT_RQUEST, func(c *fiber.Ctx) error {
 		return handleCSVImportRequest(c, db)
@@ -32,13 +46,13 @@ func handleCSVImportSelectColumnsRequest(c *fiber.Ctx) error {
 		}
 		return render(c, "partials/import_column_options", fiber.Map{
 			"presets": []string{
-				"Title",
-				"Author",
-				"Series",
-				"ISBN",
-				"Comments",
-				"Started",
-				"Finished",
+				CSV_COLUMN_Title,
+				CSV_COLUMN_Author,
+				CSV_COLUMN_Series,
+				CSV_COLUMN_ISBN,
+				CSV_COLUMN_Comments,
+				CSV_COLUMN_Started,
+				CSV_COLUMN_Finished,
 			},
 			"columns": append([]string{"-"}, columns...)},
 		)
@@ -84,13 +98,13 @@ func handleCSVImportRequest(c *fiber.Ctx, db *gorm.DB) error {
 		if err != nil {
 			return err
 		}
-		titleIdx := findColumnIdx(c, "Title", columns)
-		authorIdx := findColumnIdx(c, "Author", columns)
-		seriesIdx := findColumnIdx(c, "Series", columns)
-		isbnIdx := findColumnIdx(c, "ISBN", columns)
-		commentsIdx := findColumnIdx(c, "Comments", columns)
-		startedIdx := findColumnIdx(c, "Started", columns)
-		finishedIdx := findColumnIdx(c, "Finished", columns)
+		titleIdx := findColumnIdx(c, CSV_COLUMN_Title, columns)
+		authorIdx := findColumnIdx(c, CSV_COLUMN_Author, columns)
+		seriesIdx := findColumnIdx(c, CSV_COLUMN_Series, columns)
+		isbnIdx := findColumnIdx(c, CSV_COLUMN_ISBN, columns)
+		commentsIdx := findColumnIdx(c, CSV_COLUMN_Comments, columns)
+		startedIdx := findColumnIdx(c, CSV_COLUMN_Started, columns)
+		finishedIdx := findColumnIdx(c, CSV_COLUMN_Finished, columns)
 
 		succeed := 0
 		failed := 0
@@ -143,4 +157,43 @@ func withCSVFileReader(c *fiber.Ctx, fn func(csv.Reader) error) error {
 	reader.LazyQuotes = true
 
 	return fn(*reader)
+}
+
+func handleCSVExportRequest(c *fiber.Ctx, db *gorm.DB) error {
+	b := new(bytes.Buffer)
+
+	w := csv.NewWriter(b)
+	w.Write([]string{
+		CSV_COLUMN_Title,
+		CSV_COLUMN_Author,
+		CSV_COLUMN_Series,
+		CSV_COLUMN_ISBN,
+		CSV_COLUMN_Comments,
+		CSV_COLUMN_Started,
+		CSV_COLUMN_Finished,
+	})
+	for _, b := range books.GetAll(db) {
+		startedAt := ""
+		if b.StartedAt != nil {
+			startedAt = b.StartedAt.Format(time.RFC3339)
+		}
+		finishedAt := ""
+		if b.FinishedAt != nil {
+			finishedAt = b.FinishedAt.Format(time.RFC3339)
+		}
+		w.Write([]string{
+			b.Title,
+			b.Author,
+			b.Series,
+			b.ISBN,
+			b.Comments,
+			startedAt,
+			finishedAt,
+		})
+	}
+	w.Flush()
+
+	now := time.Now().Format("2006-01-02")
+	c.Attachment("buku-" + now + ".csv")
+	return c.Send(b.Bytes())
 }

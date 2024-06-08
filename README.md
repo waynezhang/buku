@@ -49,5 +49,5 @@ LISTEN_PORT=:9000
 - [ ] Better navigation
 - [ ] Better URL management
 - [ ] Paganation
-- [ ] Export
+- [x] Export
 - [ ] Backup
