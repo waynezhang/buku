@@ -10,6 +10,7 @@ Self-hosted reading track app for minimalist. Single binary with SQLite database
 - Book track
 - CSV import
 - Simple statistics
+- Fill by Google Books
 
 ## Build
 
@@ -44,7 +45,7 @@ LISTEN_PORT=:9000
 
 ## TODO
 
-- [ ] Google Books Integration
+- [x] Google Books Integration
 - [ ] Better navigation
 - [ ] Better URL management
 - [ ] Paganation

@@ -1,0 +1,17 @@
+input(
+  hx-get="/page/book/google_search"
+  hx-target="#google_search_results"
+  hx-trigger="click from:#google_search_button, keyup[keyCode==13]"
+  hx-include="[name='max_results']"
+  type="text"
+  name="query"
+  placeholder="intitle:xxx inauthor:xxxx isbn:xxx"
+)
+select(name="max_results")
+  option(value="10") 10
+  option(value="20") 20
+  option(value="30") 30
+  option(value="40") 40
+button#google_search_button Search
+
+p#google_search_results

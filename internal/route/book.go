@@ -3,6 +3,7 @@ package route
 import (
 	"slices"
 	"time"
+	"waynezhang/buku/internal/infra/gbook"
 	"waynezhang/buku/internal/models"
 	"waynezhang/buku/internal/repo/books"
 	"waynezhang/buku/internal/route/urls"
@@ -21,6 +22,9 @@ func loadPageBookRoutes(f *fiber.App, db *gorm.DB) {
 	})
 	f.Get(urls.URL_BOOK_SEARCH_REQUEST, func(c *fiber.Ctx) error {
 		return handleBooksSearchRequest(c, db)
+	})
+	f.Get(urls.URL_BOOK_SEARCH_FROM_GOOGLE_REQUEST, func(c *fiber.Ctx) error {
+		return handleBookkGoogleSearchRequest(c)
 	})
 	f.Get(urls.URL_BOOK_YEAR_PAGE, func(c *fiber.Ctx) error {
 		return renderYearlyBookPage(c, db)
@@ -82,6 +86,13 @@ func handleBooksSearchRequest(c *fiber.Ctx, db *gorm.DB) error {
 	status := c.Query("status", "")
 	books := books.GetByKeyword(db, name, sort, order, status)
 	return render(c, "partials/book_search_results_list", fiber.Map{
+		"books": books,
+	})
+}
+
+func handleBookkGoogleSearchRequest(c *fiber.Ctx) error {
+	books := gbook.Search(c.Query("query"), c.Query("max_results"))
+	return render(c, "partials/google_search_result", fiber.Map{
 		"books": books,
 	})
 }

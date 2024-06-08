@@ -1,0 +1,29 @@
+ul
+  for _ in .books
+    li 
+      a(
+        hx-on:click="fill({{.Id}})"
+        id="gbook-{{.Id}}"
+        data-title="{{.Title}}"
+        data-author="{{.Author}}"
+        data-isbn="{{.ISBN}}"
+      ) {{.Title}}
+        if .Author
+          | / {{.Author}}
+
+script(type="text/javascript").
+  function fill(id) {
+    data = htmx.find("#gbook-" + id).dataset
+    titleInput = htmx.find("input[name='title']")
+    if (!titleInput.value) {
+      titleInput.value = data['title']
+    }
+    authorInput = htmx.find("input[name='author']")
+    if (!authorInput.value) {
+      authorInput.value = data['author']
+    }
+    isbnInput = htmx.find("input[name='isbn']")
+    if (!isbnInput.value) {
+      isbnInput.value = data['isbn']
+    }
+  }
