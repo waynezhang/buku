@@ -51,7 +51,7 @@ func handleSeriesRenameRequest(c *fiber.Ctx, db *gorm.DB) error {
 }
 
 func renderSeriesPageWith(c *fiber.Ctx, db *gorm.DB, name string) error {
-	books := books.GetBySeries(db, name)
+	books := books.GetBySeries(db, name, "finished_at", "asc")
 	return render(c, "page/series", fiber.Map{
 		"name":  name,
 		"books": books,

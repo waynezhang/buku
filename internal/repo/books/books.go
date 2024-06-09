@@ -168,11 +168,12 @@ func GetByAuthor(db *gorm.DB, name string) []models.Book {
 	return books
 }
 
-func GetBySeries(db *gorm.DB, name string) []models.Book {
+func GetBySeries(db *gorm.DB, name string, sort string, order string) []models.Book {
 	books := []models.Book{}
 
 	db.Model(&models.Book{}).
 		Where("series = ?", name).
+		Order(sortCriteria(sort) + " " + utils.SortOrder(order)).
 		Find(&books)
 	return books
 }

@@ -217,8 +217,8 @@ func TestGetByAuthorAndGetBySeries(t *testing.T) {
 	assert.Equal(t, GetByAuthor(db, "Author 2")[0].Title, "Test 2")
 	assert.Equal(t, GetByAuthor(db, "Author 3")[0].Title, "Test 3")
 
-	assert.Equal(t, GetBySeries(db, "Series 5")[0].Title, "Test 5")
-	assert.Equal(t, GetBySeries(db, "Series 6")[0].Title, "Test 6")
+	assert.Equal(t, GetBySeries(db, "Series 5", "", "")[0].Title, "Test 5")
+	assert.Equal(t, GetBySeries(db, "Series 6", "", "")[0].Title, "Test 6")
 }
 
 func TestGetByKeyword(t *testing.T) {
