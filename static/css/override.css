@@ -4,21 +4,32 @@ a:visited {
 
 .error {
   color: #e33;
-  font-size: 0.8rem;
+  font-size: 0.8em;
 }
 
 .info_banner mark {
-  margin: 1rem 0rem;
-  padding: 1rem 2rem;
-  border-radius: 0.5rem;
+  margin: 1em 0;
+  padding: 1em 2em;
+  border-radius: 8px;
   display: block;
 }
 
 button,
 input[type=file],
-option {
-  padding: 4px 8px;
-  font-size: 0.8rem;
+select {
+  font-size: 1em;
+  margin-right: 0.5em;
+  padding: 4px 16px;
+}
+
+@media only screen and (max-width:480px) {
+
+  button,
+  input[type=file],
+  select {
+    min-height: 40px;
+    min-width: 100px;
+  }
 }
 
 button.destructive {
@@ -26,14 +37,14 @@ button.destructive {
 }
 
 .stat {
-  margin: 5rem auto;
-  font-size: 1.5rem;
+  margin: 4em auto;
+  font-size: 1.5em;
   color: #999;
 }
 
 .stat .reading_count a,
 .stat .toread_count a {
-  margin: 0 2rem;
+  padding: 0 0.2em;
   color: #555;
 }
 
@@ -43,11 +54,11 @@ button.destructive {
 }
 
 .stat .reading_count {
-  font-size: 4rem;
+  font-size: 3em;
 }
 
 .stat .toread_count {
-  font-size: 2rem;
+  font-size: 1.5em;
 }
 
 .history {
@@ -60,7 +71,7 @@ button.destructive {
 }
 
 .history .count {
-  margin-left: 0.5rem;
+  margin-left: 0.5em;
 }
 
 .history meter {
@@ -102,17 +113,19 @@ form label,
 .book_info .attr {
   color: #999;
   font-size: 80%;
-  width: 5rem;
+  width: 5em;
   display: inline-block;
 }
 
 input[type=text] {
-  width: 16rem;
-  font-size: 1rem;
+  width: 16em;
+  font-size: 1em;
+  padding: 4px;
+  margin: 4px 0;
 }
 
 #book_edit textarea {
-  width: 20rem;
-  height: 10rem;
-  font-size: 1rem;
+  width: 20em;
+  height: 10em;
+  font-size: 1em;
 }
