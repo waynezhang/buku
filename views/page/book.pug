@@ -28,11 +28,6 @@ section.book_info
       span.val {{.book.Comments}}
 
   p
-    button.destructive(
-      hx-delete="/page/book/{{.book.ID}}"
-      hx-confirm="Are you sure to delete {{.book.Title}}"
-      hx-target="#message"
-    ) Delete
     if eq .book.Status "reading"
       button(
         hx-post="/page/book/{{.book.ID}}/status/to-read"
@@ -47,8 +42,12 @@ section.book_info
         hx-post="/page/book/{{.book.ID}}/status/reading"
         hx-target="#message"
       ) Start
-    a(
-      href="/page/book/{{.book.ID}}/edit#"
-    )
-      button Edit
+    span.space
+    a.btn-link(href="/page/book/{{.book.ID}}/edit#") Edit
+    a.btn-link-destructive(
+      href="#"
+      hx-delete="/page/book/{{.book.ID}}"
+      hx-confirm="Are you sure to delete {{.book.Title}}"
+      hx-target="#message"
+    ) Delete
   p#message

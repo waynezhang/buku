@@ -1,6 +1,7 @@
 package route
 
 import (
+	"fmt"
 	"time"
 	"waynezhang/buku/internal/infra/config"
 	"waynezhang/buku/internal/models"
@@ -18,6 +19,9 @@ func Load(cfg *config.Config, db *gorm.DB) *fiber.App {
 	engine.Reload(cfg.Debug)
 	engine.AddFunc("now", func() string {
 		return time.Now().Format("2006-01-02")
+	})
+	engine.AddFunc("this_year", func() string {
+		return fmt.Sprintf("%d", time.Now().Year())
 	})
 	engine.AddFunc("date_fmt", func(t *time.Time) string {
 		if t == nil {

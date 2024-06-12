@@ -2,6 +2,12 @@ include ../mixin/mixin
 
 section
   p.stat
+    | You've
+    mark finished
+      strong.finished_count
+        a(href="/page/book/year/{{this_year}}") {{.finished_this_year}}
+      | books in {{this_year}}
+    | ,
     span.reading_count
       a(href="#reading") {{.counts.Reading}}
     | ongoing,
