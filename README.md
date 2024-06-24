@@ -50,4 +50,4 @@ LISTEN_PORT=:9000
 - [ ] Better URL management
 - [ ] Paganation
 - [x] Export
-- [ ] Backup
+- ~[ ] Backup~ Use [Litestream](https://litestream.io)
