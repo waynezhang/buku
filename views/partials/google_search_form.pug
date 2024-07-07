@@ -1,19 +1,17 @@
 .flex.justify-between
-  input.fl.w-60(
+  input.fl.w-70(
     hx-get="/page/book/google_search"
     hx-target="#google_search_results"
-    hx-trigger="click from:#google_search_button, keyup[keyCode==13]"
+    hx-trigger="keyup delay:200ms changed, change from:#page_size"
     hx-include="[name='max_results']"
     type="text"
     name="query"
     placeholder="intitle:xxx inauthor:xxxx isbn:xxx"
   )
-  select.fl.w-10(name="max_results")
+  select#page_size.fl.w-20(name="max_results")
     option(value="10") 10
     option(value="20") 20
     option(value="30") 30
     option(value="40") 40
-  .fl.w-20
-      a.link.pointer.ba.br2.dim.blue.pv1.ph3#google_search_button Search
 
 p#google_search_results

@@ -1,9 +1,9 @@
 mixin book_item_line(book)
-  a.link(href="/page/book/{{.ID}}#") {{.Title}}
+  a.link.blue(href="/page/book/{{.ID}}#") {{.Title}}
   if .Author
     span /
     span
-      a.link(href="/page/author/{{.Author}}#") {{.Author}}
+      a.link.blue(href="/page/author/{{.Author}}#") {{.Author}}
 
 mixin book_item(book)
   li

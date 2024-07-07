@@ -14,19 +14,22 @@ form.flex.flex-column(
       )
   .w-100.mt2
     .fl.w-20 Delimiter
-    .fl.w-50
+    .fl.w-20
       select(name="delimiter")
         option(value=",") ,
         option(value=";") ;
-    a.fl.w-30.link.ba.br2.tc.dim.pointer.blue.pv1.ph3(
-      hx-post="/page/import/select_columns"
-      hx-target="#message"
-      type="submit"
-    ) Read Columns
+    .fl.w-60
+      .flex.justify-between
+        .fl
+        a.fl.link.ba.br2.tc.dim.pointer.blue.pv1.ph3(
+          hx-post="/page/import/select_columns"
+          hx-target="#message"
+          type="submit"
+        ) Read Columns
   .w-100.mt2
     .flex.justify-between
       .fl
-      a.fl.db.w-30.link.br2.tc.dim.pointer.pv1.ph3.near-white.bg-blue(
+      a.fl.link.br2.tc.dim.pointer.pv1.ph3.near-white.bg-blue(
         hx-post="/page/import"
         hx-target="#message"
         type="submit"

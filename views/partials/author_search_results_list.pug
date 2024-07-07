@@ -1,5 +1,5 @@
 ul.list.pl0
   for _ in .authors
     li
-      a(href="/page/author/{{.}}") {{.}}
+      a.link.blue(href="/page/author/{{.}}") {{.}}
 .mt2.black-80.tr {{.authors | len}} found.
