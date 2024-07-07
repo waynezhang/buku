@@ -1,53 +1,59 @@
-h5 {{.book.Title}}
+h3 {{.book.Title}}
 
-section.book_info
-  p
-    span.attr Author
-    span.val
-      a(href="/page/author/{{.book.Author}}") {{.book.Author}}
-    br
-    span.attr Series
-    span.val
-      a(href="/page/series/{{.book.Series}}") {{.book.Series}}
-    br
-    span.attr ISBN
-    span.val {{.book.ISBN}}
-    br
-    span.attr Started
-    span.val {{.book.StartedAt | date_fmt}}
-    br
-    span.attr Finished
-    span.val {{.book.FinishedAt | date_fmt}}
-    br
-    span.attr Created
-    span.val {{.book.CreatedAt | date_fmt}}
-    br
-    span.attr Comments
-    br
-    if .book.Comments
-      span.val {{.book.Comments}}
+.flex.flex-column
+  .w-100
+    .fl.w-20 Author
+    a.fl.w-80.link.blue(href="/page/author/{{.book.Author}}") {{.book.Author}}
+  .w-100
+    .fl.w-20 Series
+    a.fl.w-80(href="/page/series/{{.book.Series}}") {{.book.Series}}
+  .w-100
+    .fl.w-20 ISBN
+    .fl.w-80 {{.book.ISBN}}
+  .w-100
+    .fl.w-20 Started
+    .fl.w-80 {{.book.StartedAt | date_fmt}}
+  .w-100
+    .fl.w-20 Finished
+    .fl.w-80  {{.book.FinishedAt | date_fmt}}
+  .w-100
+    .fl.w-20 Created
+    .fl.w-80  {{.book.CreatedAt | date_fmt}}
+  .w-100 Comments
+  if .book.Comments
+    .w-100 {{.book.Comments}}
 
-  p
+h4 Actions
+
+.flex
+  .fl.w-60
     if eq .book.Status "reading"
-      button(
+      a.link.pointer.dim.pv1.ph3.blue.ba.br2(
         hx-post="/page/book/{{.book.ID}}/status/to-read"
         hx-target="#message"
       ) Stop
-      button(
+      a.link.pointer.dim.pv1.ph3.near-white.bg-blue.ba.br2.ml2(
         hx-post="/page/book/{{.book.ID}}/status/read"
         hx-target="#message"
       ) Finish
+
     if eq .book.Status "to-read"
-      button(
+      a.link.pointer.dim.pv1.ph3.near-white.bg-blue.ba.br2(
         hx-post="/page/book/{{.book.ID}}/status/reading"
         hx-target="#message"
       ) Start
-    span.space
-    a.btn-link(href="/page/book/{{.book.ID}}/edit#") Edit
-    a.btn-link-destructive(
-      href="#"
-      hx-delete="/page/book/{{.book.ID}}"
-      hx-confirm="Are you sure to delete {{.book.Title}}"
-      hx-target="#message"
-    ) Delete
-  p#message
+
+  .fl.w-40
+    .flex.justify-between
+      .fl
+      .fl
+        a.link.blue.ml2.pv1.ph2(
+          href="/page/book/{{.book.ID}}/edit#"
+        ) Edit
+        a.link.pointer.red.pv1.ph3.ba.br2(
+          hx-delete="/page/book/{{.book.ID}}"
+          hx-confirm="Are you sure to delete {{.book.Title}}"
+          hx-target="#message"
+        ) Delete
+
+p#message

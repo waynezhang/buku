@@ -1,9 +1,9 @@
 mixin book_item_line(book)
-  a.title(href="/page/book/{{.ID}}#") {{.Title}}
+  a.link(href="/page/book/{{.ID}}#") {{.Title}}
   if .Author
     span /
-    span.author
-      a(href="/page/author/{{.Author}}#") {{.Author}}
+    span
+      a.link(href="/page/author/{{.Author}}#") {{.Author}}
 
 mixin book_item(book)
   li
@@ -17,6 +17,6 @@ mixin book_item_with_tag(book)
     ) &#x23;{{.Status}}
 
 mixin book_list(books)
-  ul.book_list
+  ul.list.pl0
     for _ in .books
       +book_item(.)

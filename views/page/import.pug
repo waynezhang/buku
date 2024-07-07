@@ -1,34 +1,38 @@
-h5 Import
+h3 Import
 
-section
-  h6
-  form(
-    hx-encoding="multipart/form-data"
-  )
-    p
-      label(for="file") CSV file
+form.flex.flex-column(
+  hx-encoding="multipart/form-data"
+)
+  .w-100
+    .fl.w-20 Select file
+    label.fl.w-80(for="file")
       input(
         type="file"
         name="file"
         id="file"
         accept=".csv"
       )
-      label(for="delimiter") Delimiter
+  .w-100.mt2
+    .fl.w-20 Delimiter
+    .fl.w-50
       select(name="delimiter")
         option(value=",") ,
         option(value=";") ;
-    p
-      button(
-        hx-post="/page/import/select_columns"
-        hx-target="#message"
-        type="submit"
-      ) Read Columns
-      button(
+    a.fl.w-30.link.ba.br2.tc.dim.pointer.blue.pv1.ph3(
+      hx-post="/page/import/select_columns"
+      hx-target="#message"
+      type="submit"
+    ) Read Columns
+  .w-100.mt2
+    .flex.justify-between
+      .fl
+      a.fl.db.w-30.link.br2.tc.dim.pointer.pv1.ph3.near-white.bg-blue(
         hx-post="/page/import"
         hx-target="#message"
         type="submit"
       ) Import
-    p#message
+
+  p#message.bg-black-05.br2
 
 if .results
   section

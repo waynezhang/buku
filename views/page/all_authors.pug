@@ -1,7 +1,7 @@
-h5 Authors
+h3 Authors
 
-section
-  input(
+.flex
+  input.w-100(
     name="name"
     value="{{.name}}"
     hx-get="/page/author/search"
@@ -9,9 +9,11 @@ section
     hx-trigger="load, change, keyup delay:200ms changed, change from:#sort_order"
     hx-target="#search_result"
   )
+
+.flex.mt2.justify-between
   label Order by name
-  select#sort_order(name="order")
-    option(value="asc") Asc
-    option(value="desc") Desc
+    select.ml2#sort_order(name="order")
+      option(value="asc") Asc
+      option(value="desc") Desc
 
 section#search_result

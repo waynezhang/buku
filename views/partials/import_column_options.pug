@@ -1,15 +1,12 @@
-if .error_message
-  p
-    small.error {{.error_message}}
 if .columns
-  p
+  .flex.flex-column
     for _ in .presets
-      label(for="{{.}}") {{.}}
-      select(
-        name="{{.}}"
-      )
-        for _ in $.columns
-          option(
-            value="{{.}}"
-          ) {{.}}
-      hr
+      .w-100.pa2
+        label.fl.w-20(for="{{.}}") {{.}}
+        select.fl.w-80(
+          name="{{.}}"
+        )
+          for _ in $.columns
+            option(
+              value="{{.}}"
+            ) {{.}}

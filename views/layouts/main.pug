@@ -4,28 +4,23 @@ html
     title buku
     meta(charset="UTF-8")
     meta(name="viewport" content="width=device-width, initial-scale=1.0")
-    link(rel="stylesheet" href="//writ.cmcenroe.me/1.0.4/writ.min.css")
+    link(rel="stylesheet" href="https://unpkg.com/tachyons@4.12.0/css/tachyons.min.css")
     link(rel="stylesheet" href="/css/override.css")
     script(src="https://unpkg.com/htmx.org@2.0.0/dist/htmx.min.js")
 
-  body
-    header
-      h3 buku
-      nav(hx-boost="true" hx-target="main")
-        ul
-          li
-            a(href="/page/home#") Home
-          li
-            a(href="/page/backlog#") Backlog
-          li
-            a(href="/page/admin#") Admin
-          li |
-          li
-            a(href="/page/book/new") New
-    main(hx-boost="true" hx-target="main")
+  body.athelas.black-80.bg-white-90
+    header.tc
+      h1.f2.lh-copy
+        a.link.black-80(href="/page/home#") buku
+      nav.f5.lh-title(hx-boost="true" hx-target="main")
+        a.mh1.pv1.ph2.black-80.hover-blue.dib.br3.link(href="/page/backlog#") Backlog
+        a.mh1.pv1.ph2.black-80.hover-blue.dib.br3.link(href="/page/admin#") Admin
+        a.mh1.pv1.ph2.black-80.hover-blue.dib.br3.link(href="/page/book/new") New
+
+    main.mt4.mw6.w-100.center.h-title.lh-copy.ph2(hx-boost="true" hx-target="main")
       | {{embed}}
 
-    footer
+    footer.tc.mt4
       p 
         Copyright &copy {{this_year}}
-        a(href="https://github.com/waynezhang/buku" target="_blank") buku
+        a.link.black-80.hover-blue(href="https://github.com/waynezhang/buku" target="_blank") buku

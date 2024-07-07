@@ -1,32 +1,26 @@
-ul
+ul.list.pl0
   for _ in .books
-    li 
-      span
-        a(
-          hx-on:click="fill({{.Id}})"
-          id="gbook-{{.Id}}"
-          data-title="{{.Title}}"
-          data-author="{{.Author}}"
-          data-isbn="{{.ISBN}}"
-        ) {{.Title}}
-      if .Author
-        | / {{.Author}}
+    li.mt2
+      a.link.pointer.blue(
+        hx-on:click="fill({{.Id}})"
+        id="gbook-{{.Id}}"
+        data-title="{{.Title}}"
+        data-author="{{.Author}}"
+        data-isbn="{{.ISBN}}"
+      ) {{.Title}}
+        if .Author
+          | / {{.Author}}
       if .InfoLink
-        a.carbon--link(href="{{.InfoLink}}" target="_blank")
+        small
+          a.blue.link.pointer(href="{{.InfoLink}}" target="_blank") (link)
 
 script(type="text/javascript").
   function fill(id) {
     data = htmx.find("#gbook-" + id).dataset
     titleInput = htmx.find("input[name='title']")
-    if (!titleInput.value) {
-      titleInput.value = data['title']
-    }
+    titleInput.value = data['title']
     authorInput = htmx.find("input[name='author']")
-    if (!authorInput.value) {
-      authorInput.value = data['author']
-    }
+    authorInput.value = data['author']
     isbnInput = htmx.find("input[name='isbn']")
-    if (!isbnInput.value) {
-      isbnInput.value = data['isbn']
-    }
+    isbnInput.value = data['isbn']
   }

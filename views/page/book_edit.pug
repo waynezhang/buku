@@ -1,45 +1,45 @@
-h5 {{.title}}
+h3 {{.title}}
 
-section
-  form#book_edit
-    p
-      label(for="title") Title
-      input(type="text" name="title" placeholder="Title" value="{{.book.Title}}")
-      br
-      label(for="author") Author
-      input(type="text" name="author" placeholder="Author" value="{{.book.Author}}" list="author_list")
-      br
-      label(for="Series") Series
-      input(type="text" name="series" placeholder="Series" value="{{.book.Series}}" list="series_list")
-      br
-      label(for="ISBN") ISBN
-      input(type="text" name="isbn" placeholder="ISBN" value="{{.book.ISBN}}")
-      br
-      label(for="startedAt") Started
-      input(type="text" name="startedAt" placeholder="{{now}}" value="{{.book.StartedAt | date_fmt}}")
-      br
-      label(for="finishedAt") Finished
-      input(type="text" name="finishedAt" placeholder="{{now}}" value="{{.book.FinishedAt | date_fmt}}")
-      br
-      label(for="comments") Comments
-      br
-      textarea(name="comments") {{.book.Comments}}
-    p
-      if .bookID
-        button(
-          type="submit"
-          hx-post="/page/book/{{.bookID}}"
-          hx-target="#message"
-        ) Submit
-      else
-        button(
-          type="submit"
-          hx-post="/page/book"
-          hx-target="#message"
-        ) Submit
-    p#message
+form.flex.flex-column#book_edit
+  .w-100
+    label.fl.w-20(for="title") Title
+    input.fl.w-80(type="text" name="title" placeholder="Title" value="{{.book.Title}}")
+  .w-100.mt2
+    label.fl.w-20(for="author") Author
+    input.fl.w-80(type="text" name="author" placeholder="Author" value="{{.book.Author}}" list="author_list")
+  .w-100.mt2
+    label.fl.w-20(for="Series") Series
+    input.fl.w-80(type="text" name="series" placeholder="Series" value="{{.book.Series}}" list="series_list")
+  .w-100.mt2
+    label.fl.w-20(for="ISBN") ISBN
+    input.fl.w-80(type="text" name="isbn" placeholder="ISBN" value="{{.book.ISBN}}")
+  .w-100.mt2
+    label.fl.w-20(for="startedAt") Started
+    input.fl.w-80(type="text" name="startedAt" placeholder="{{now}}" value="{{.book.StartedAt | date_fmt}}")
+  .w-100.mt2
+    label.fl.w-20(for="finishedAt") Finished
+    input.fl.w-80(type="text" name="finishedAt" placeholder="{{now}}" value="{{.book.FinishedAt | date_fmt}}")
+  .w-100.mt2
+    label(for="comments") Comments
+  .w-100.mt2
+    textarea.w-100.h4.br2.ba.b--black-20(name="comments") {{.book.Comments}}
 
-section
+  .w-100.mt4
+    if .bookID
+      a.link.pointer.pv1.ph3.dim.bg-blue.near-white.ba.br2(
+        type="submit"
+        hx-post="/page/book/{{.bookID}}"
+        hx-target="#message"
+      ) Submit
+    else
+      a.link.pointer.pv1.ph3.dim.bg-blue.near-white.ba.br2(
+        type="submit"
+        hx-post="/page/book"
+        hx-target="#message"
+      ) Submit
+  p#message
+
+.mt2
   details
     summary Search from Google
     include ../partials/google_search_form

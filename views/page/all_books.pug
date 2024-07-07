@@ -1,7 +1,7 @@
-h5 Books
+h3 Books
 
-section
-  input(
+.flex
+  input.w-100(
     name="name"
     value="{{.name}}"
     hx-get="/page/book/search"
@@ -9,23 +9,23 @@ section
     hx-include="[name='sort'], [name='order'], [name='status']"
     hx-trigger="load, change, keyup delay:200ms changed, change from:#sort_filter, change from:#sort_order, change from:#status"
   )
-  span |
+
+.flex.mt2.justify-between
   label Sort by
-  select#sort_filter(name="sort")
-    option(value="title") Title
-    option(value="author") Author
-    option(value="created_at") Added date
-    option(value="started_at") Started date
-    option(value="finshed_at") Finshed date
-  select#sort_order(name="order")
-    option(value="asc") Asc
-    option(value="desc") Desc
-  span |
-  label Status
-  select#status(name="status")
-    option(value="") All
-    option(value="to-read") Backlog
-    option(value="reading") Reading
-    option(value="read") Finished
+    select.ml2#sort_filter(name="sort")
+      option(value="title") Title
+      option(value="author") Author
+      option(value="created_at") Added date
+      option(value="started_at") Started date
+      option(value="finshed_at") Finshed date
+    select.ml1#sort_order(name="order")
+      option(value="asc") Asc
+      option(value="desc") Desc
+  label.ml4 Status
+    select.ml2#status(name="status")
+      option(value="") All
+      option(value="to-read") Backlog
+      option(value="reading") Reading
+      option(value="read") Finished
 
 section#search_results

@@ -1,37 +1,35 @@
 include ../mixin/mixin
 
-section
-  p.stat
-    | You've
-    mark &nbsp;finished
-      strong.finished_count
-        a(href="/page/book/year/{{this_year}}") {{.finished_this_year}}
-      | books in {{this_year}}
-    | ,
-    span.reading_count
-      a(href="#reading") {{.counts.Reading}}
-    | ongoing.
+p.f3.gray
+  span You've 
+  mark.gray finished 
+  mark.gray
+    a.gray.hover-blue.link.f-subheadline.ph3.underline(href="/page/book/year/{{this_year}}") {{.finished_this_year}}
+  mark.gray books in {{this_year}}
+  span ,
+  span.f1 {{.counts.Reading}}
+  span ongoing.
 
-section
-  h6#reading Reading
+.mt4
+  h4 Reading
   if .reading_books | len
-    ul
+    ul.list.pl0
       for _ in .reading_books
         +book_item(.)
   else
-    p.info_banner
-      mark Let's start reading!
+    .black-50.pb3.mv2
+      | Let's start reading!
 
-section
-  h6. History
-  p.history
-    if .yearRecords | len
-      for _ in .yearRecords
-        span.year
-          a(href="/page/book/year/{{.Year}}") {{.Year}}
-          small.count ({{.Count}})
-        meter(min="0" max="100" value="{{.Ratio}}")
-        br
-    else
-      p.info_banner
-        mark No reading history yet.
+.mt4
+  h4 History
+  if .yearRecords | len
+    for _ in .yearRecords
+      .flex.w-100.items-center.lh-title
+        .fl.w-20
+          a.f4(href="/page/book/year/{{.Year}}") {{.Year}}
+          span.f6 ({{.Count}})
+        .fl.w-40
+            meter(min="0" max="100" value="{{.Ratio}}")
+  else
+    .black-50.pb3.mv2
+      | No reading history yet.
