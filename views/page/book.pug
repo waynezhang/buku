@@ -1,59 +1,52 @@
-h3 {{.book.Title}}
+.f2.fw6.black-80.pb3 {{.book.Title}}
+.mt3
 
 .flex.flex-column
-  .w-100
+  .w-100.pv2
     .fl.w-20 Author
     a.fl.w-80.link.blue(href="/page/author/{{.book.Author}}") {{.book.Author}}
-  .w-100
+  .w-100.pv2
     .fl.w-20 Series
     a.fl.w-80.link.blue(href="/page/series/{{.book.Series}}") {{.book.Series}}
-  .w-100
+  .w-100.pv2
     .fl.w-20 ISBN
     .fl.w-80 {{.book.ISBN}}
-  .w-100
+  .w-100.pv2
     .fl.w-20 Started
     .fl.w-80 {{.book.StartedAt | date_fmt}}
-  .w-100
+  .w-100.pv2
     .fl.w-20 Finished
     .fl.w-80  {{.book.FinishedAt | date_fmt}}
-  .w-100
+  .w-100.pv2
     .fl.w-20 Created
     .fl.w-80  {{.book.CreatedAt | date_fmt}}
-  .w-100 Comments
-  if .book.Comments
-    .w-100 {{.book.Comments}}
+  .w-100.pv2
+    .fl.w-20 Comments
+    .fl.w-80.black-60 {{.book.Comments}}
 
-h4 Actions
+div.mt3
+  if eq .book.Status "reading"
+    a.link.pointer.dim.pv1.ph3.blue.ba.br2.mr2(
+      hx-post="/page/book/{{.book.ID}}/status/to-read"
+      hx-target="#message"
+    ) Stop
+    a.link.pointer.dim.pv1.ph3.near-white.bg-blue.ba.br2.mr2(
+      hx-post="/page/book/{{.book.ID}}/status/read"
+      hx-target="#message"
+    ) Finish
 
-.flex
-  .fl.w-60
-    if eq .book.Status "reading"
-      a.link.pointer.dim.pv1.ph3.blue.ba.br2(
-        hx-post="/page/book/{{.book.ID}}/status/to-read"
-        hx-target="#message"
-      ) Stop
-      a.link.pointer.dim.pv1.ph3.near-white.bg-blue.ba.br2.ml2(
-        hx-post="/page/book/{{.book.ID}}/status/read"
-        hx-target="#message"
-      ) Finish
-
-    if eq .book.Status "to-read"
-      a.link.pointer.dim.pv1.ph3.near-white.bg-blue.ba.br2(
-        hx-post="/page/book/{{.book.ID}}/status/reading"
-        hx-target="#message"
-      ) Start
-
-  .fl.w-40
-    .flex.justify-between
-      .fl
-      .fl
-        a.link.blue.ml2.pv1.ph2(
-          href="/page/book/{{.book.ID}}/edit#"
-        ) Edit
-        a.link.pointer.red.pv1.ph3.ba.br2(
-          hx-delete="/page/book/{{.book.ID}}"
-          hx-confirm="Are you sure to delete {{.book.Title}}"
-          hx-target="#message"
-        ) Delete
+  if eq .book.Status "to-read"
+    a.link.pointer.dim.pv1.ph3.near-white.bg-blue.ba.br2(
+      hx-post="/page/book/{{.book.ID}}/status/reading"
+      hx-target="#message"
+    ) Start
+  a.link.pointer.red.pv1.ph3.ba.br2.mr2.dim(
+    hx-delete="/page/book/{{.book.ID}}"
+    hx-confirm="Are you sure to delete {{.book.Title}}"
+    hx-target="#message"
+  ) Delete
+  a.link.blue.pv1.ph2.mr2(
+    href="/page/book/{{.book.ID}}/edit#"
+  ) Edit
 
 p#message

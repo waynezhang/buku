@@ -8,19 +8,18 @@ html
     link(rel="stylesheet" href="/css/override.css")
     script(src="https://unpkg.com/htmx.org@2.0.0/dist/htmx.min.js")
 
-  body.athelas.black-80.bg-white-90
-    header.tc
-      h1.f2.lh-copy
-        a.link.black-80(href="/page/home#") buku
-      nav.f5.lh-title(hx-boost="true" hx-target="main")
+  body.athelas.black-80.bg-white-90.ma0.pa0
+    header.tc.pv3.bg-near-white.bb.b--black-05
+      a.f2.lh-copy.link.black-80(hx-boost="true" href="/page/home#" hx-target="main") buku
+      nav.f5.lh-title.mt3(hx-boost="true" hx-target="main")
         a.mh1.pv1.ph2.black-80.hover-blue.dib.br3.link(href="/page/backlog#") Backlog
         a.mh1.pv1.ph2.black-80.hover-blue.dib.br3.link(href="/page/admin#") Admin
-        a.mh1.pv1.ph2.black-80.hover-blue.dib.br3.link(href="/page/book/new") New
+        a.mh1.pv1.ph2.black-80.hover-blue.dib.br3.link(href="/page/book/new#") New
 
-    main.mt4.mw6.w-100.center.h-title.lh-copy.ph2(hx-boost="true" hx-target="main")
+    main.mv4.mw6.w-100.center.h-title.lh-copy.ph2(hx-boost="true" hx-target="main")
       | {{embed}}
 
-    footer.tc.mt4
+    footer.tc.mt5
       p 
         Copyright &copy {{this_year}}
         a.link.black-80.hover-blue(href="https://github.com/waynezhang/buku" target="_blank") buku

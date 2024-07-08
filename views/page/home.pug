@@ -11,7 +11,7 @@ p.f3.gray
   span ongoing.
 
 .mt4
-  h4 Reading
+  .f5.fw6.black-60.mv3 Reading
   if .reading_books | len
     ul.list.pl0
       for _ in .reading_books
@@ -21,15 +21,15 @@ p.f3.gray
       | Let's start reading!
 
 .mt4
-  h4 History
+  .f5.fw6.black-60.mv3 History
   if .yearRecords | len
     for _ in .yearRecords
-      .flex.w-100.items-center.lh-title
+      .flex.items-center.lh-title
         .fl.w-20
           a.f4.blue.link(href="/page/book/year/{{.Year}}") {{.Year}}
           span.f6 ({{.Count}})
-        .fl.w-40
-            meter(min="0" max="100" value="{{.Ratio}}")
+        .fl.w-80
+            meter.w-100.dib(min="0" max="100" value="{{.Ratio}}")
   else
     .black-50.pb3.mv2
       | No reading history yet.
