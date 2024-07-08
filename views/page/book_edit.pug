@@ -3,23 +3,23 @@
 
 form.flex.flex-column#book_edit
   .w-100
-    label.fl.w-20(for="title") Title
-    input.fl.w-80(type="text" name="title" placeholder="Title" value="{{.book.Title}}")
+    label.fl.w-100.w-20-ns(for="title") Title
+    input.fl.w-100.w-80-ns(type="text" name="title" placeholder="Title" value="{{.book.Title}}")
   .w-100.mt2
-    label.fl.w-20(for="author") Author
-    input.fl.w-80(type="text" name="author" placeholder="Author" value="{{.book.Author}}" list="author_list")
+    label.fl.w-100.w-20-ns(for="author") Author
+    input.fl.w-100.w-80-ns(type="text" name="author" placeholder="Author" value="{{.book.Author}}" list="author_list")
   .w-100.mt2
-    label.fl.w-20(for="Series") Series
-    input.fl.w-80(type="text" name="series" placeholder="Series" value="{{.book.Series}}" list="series_list")
+    label.fl.w-100.w-20-ns(for="Series") Series
+    input.fl.w-100.w-80-ns(type="text" name="series" placeholder="Series" value="{{.book.Series}}" list="series_list")
   .w-100.mt2
-    label.fl.w-20(for="ISBN") ISBN
-    input.fl.w-80(type="text" name="isbn" placeholder="ISBN" value="{{.book.ISBN}}")
+    label.fl.w-100.w-20-ns(for="ISBN") ISBN
+    input.fl.w-100.w-80-ns(type="text" name="isbn" placeholder="ISBN" value="{{.book.ISBN}}")
   .w-100.mt2
-    label.fl.w-20(for="startedAt") Started
-    input.fl.w-80(type="text" name="startedAt" placeholder="{{now}}" value="{{.book.StartedAt | date_fmt}}")
+    label.fl.w-100.w-20-ns(for="startedAt") Started
+    input.fl.w-100.w-80-ns(type="text" name="startedAt" placeholder="{{now}}" value="{{.book.StartedAt | date_fmt}}")
   .w-100.mt2
-    label.fl.w-20(for="finishedAt") Finished
-    input.fl.w-80(type="text" name="finishedAt" placeholder="{{now}}" value="{{.book.FinishedAt | date_fmt}}")
+    label.fl.w-100.w-20-ns(for="finishedAt") Finished
+    input.fl.w-100.w-80-ns(type="text" name="finishedAt" placeholder="{{now}}" value="{{.book.FinishedAt | date_fmt}}")
   .w-100.mt2
     label(for="comments") Comments
   .w-100.mt2
