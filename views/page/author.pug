@@ -1,14 +1,16 @@
 include ../mixin/mixin
 
-h3 {{.name}}
+.page-header {{.name}}
 
-h4 All books
+.sub-page-header All books
+
 ul.list.pl0
   for _ in .books
     +book_item_with_tag(.)
 
-h4 Actions
-a.link.pointer.br2.ba.blue.dim.pv1.ph3(
+.sub-page-header Actions
+
+a.link.button(
   hx-post="/page/author/{{.name}}/rename"
   hx-prompt="New name"
   hx-target="#message"

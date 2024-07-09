@@ -1,35 +1,37 @@
 include ../mixin/mixin
 
-p.f3.gray
-  span You've 
-  mark.gray finished 
-  mark
-    a.gray.hover-blue.link.f-subheadline.ph3.underline(href="/page/book/year/{{this_year}}") {{.finished_this_year}}
-  mark.gray books in {{this_year}}
-  span ,
-  span.f1 {{.counts.Reading}}
-  span ongoing.
+.f3.gray
+  | You've 
+    mark.gray.pl1 finished 
+    mark
+      a.gray.hover-blue.link.f-subheadline.ph3.underline(href="/page/book/year/{{this_year}}") {{.finished_this_year}}
+    mark.gray.pr1 books in {{this_year}}
+    span ,
+    span.f1 {{.counts.Reading}}
+    span ongoing.
 
 .mt4
-  .f5.fw6.black-60.mv3 Reading
-  if .reading_books | len
-    ul.list.pl0
-      for _ in .reading_books
-        +book_item(.)
-  else
-    .black-50.pb3.mv2
-      | Let's start reading!
+
+.sub-page-header Reading
+if .reading_books | len
+  ul.list.pl0
+    for _ in .reading_books
+      +book_item(.)
+else
+  .black-50.pb3.mv2
+    | Let's start reading!
 
 .mt4
-  .f5.fw6.black-60.mv3 History
-  if .yearRecords | len
-    for _ in .yearRecords
-      .flex.items-center.lh-title
-        .fl.w-20
-          a.f4.blue.link(href="/page/book/year/{{.Year}}") {{.Year}}
-          span.f6 ({{.Count}})
-        .fl.w-80
-            meter.w-100.dib(min="0" max="100" value="{{.Ratio}}")
-  else
-    .black-50.pb3.mv2
-      | No reading history yet.
+
+.sub-page-header History
+if .yearRecords | len
+  for _ in .yearRecords
+    .flex.items-center.lh-title
+      .w-20
+        a.f4.blue.link(href="/page/book/year/{{.Year}}") {{.Year}}
+        span.f6 ({{.Count}})
+      .w-80
+          meter.w-100.dib(min="0" max="100" value="{{.Ratio}}")
+else
+  .black-50.pb3.mv2
+    | No reading history yet.

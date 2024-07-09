@@ -1,19 +1,23 @@
-.f2.fw6.black-80.pb3 Admin
-.mt3
+.page-header Admin
 
-.f5.fw6.black-60.mb3 Data Management
+.sub-page-header Data Management
+
 a.link.blue.mr3(href="/page/book/all#") Books
 a.link.blue.mr3(href="/page/author/all#") Authors
 a.link.blue.mr3(href="/page/series/all#") Series
 
 .mt4
-.f5.fw6.black-60.mb3 Import/Export
+
+.sub-page-header Import/Export
+
 a.link.blue.mr3(href="/page/import#") Import
-a.link.blue.mr3.ba.br3.pv1.ph3.dim(href="/page/export" hx-boost="false") Export
+a.link.mr3.button(href="/page/export" hx-boost="false") Export
 
 .mt4
-.f5.fw6.black-60.mb3 Danger Zone
-a.pointer.link.red.ba.br3.pv1.ph3.dim(
+
+.sub-page-header Danger Zone
+
+a.pointer.link.button.destructive(
   hx-post="/page/admin/nuke"
   hx-confirm="Ar you sure to nuke the database?"
   hx-target="#message"

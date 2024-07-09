@@ -1,31 +1,36 @@
-.f2.fw6.black-80.pb3 Books
-.mt3
+.page-header Books
 
-input.w-100.mb2(
-  name="name"
-  value="{{.name}}"
-  hx-get="/page/book/search"
-  hx-target="#search_results"
-  hx-include="[name='sort'], [name='order'], [name='status']"
-  hx-trigger="load, change, keyup delay:200ms changed, change from:#sort_filter, change from:#sort_order, change from:#status"
-)
+.flex
+  input.w-100(
+    name="name"
+    value="{{.name}}"
+    hx-get="/page/book/search"
+    hx-target="#search_results"
+    hx-include="[name='sort'], [name='order'], [name='status']"
+    hx-trigger="load, change, keyup delay:200ms changed, change from:#sort_filter, change from:#sort_order, change from:#status"
+  )
 
-label.w-100.w-60-ns.dib Sort by
-  select.ml2#sort_filter(name="sort")
-    option(value="title") Title
-    option(value="author") Author
-    option(value="created_at") Added date
-    option(value="started_at") Started date
-    option(value="finshed_at") Finshed date
-  select.ml1#sort_order(name="order")
-    option(value="asc") Asc
-    option(value="desc") Desc
+.mt2
 
-label.w-100.w-40-ns Status
-  select.ml2#status(name="status")
-    option(value="") All
-    option(value="to-read") Backlog
-    option(value="reading") Reading
-    option(value="read") Finished
+.flex.flex-wrap
+  .w-100.w-70-ns
+    label Sort by
+    select.ml2#sort_filter(name="sort")
+      option(value="title") Title
+      option(value="author") Author
+      option(value="created_at") Added date
+      option(value="started_at") Started date
+      option(value="finshed_at") Finshed date
+    select.ml1#sort_order(name="order")
+      option(value="asc") Asc
+      option(value="desc") Desc
+
+  .w-100.w-30-ns.tr-ns
+    label Status
+    select.ml2#status(name="status")
+      option(value="") All
+      option(value="to-read") Backlog
+      option(value="reading") Reading
+      option(value="read") Finished
 
 section#search_results

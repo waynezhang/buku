@@ -1,17 +1,19 @@
 .flex.justify-between
-  input.fl.w-70(
-    hx-get="/page/book/google_search"
-    hx-target="#google_search_results"
-    hx-trigger="keyup delay:200ms changed, change from:#page_size"
-    hx-include="[name='max_results']"
-    type="text"
-    name="query"
-    placeholder="intitle:xxx inauthor:xxxx isbn:xxx"
-  )
-  select#page_size.fl.w-20(name="max_results")
-    option(value="10") 10
-    option(value="20") 20
-    option(value="30") 30
-    option(value="40") 40
+  .w-100.w-80-ns
+    input.w-100(
+      hx-get="/page/book/google_search"
+      hx-target="#google_search_results"
+      hx-trigger="keyup delay:200ms changed, change from:#page_size"
+      hx-include="[name='max_results']"
+      type="text"
+      name="query"
+      placeholder="intitle:xxx inauthor:xxxx isbn:xxx"
+    )
+  .pl3
+    select#page_size(name="max_results")
+      option(value="10") 10
+      option(value="20") 20
+      option(value="30") 30
+      option(value="40") 40
 
 p#google_search_results

@@ -1,36 +1,34 @@
-.f2.fw6.black-80.pb3 Import
-.mt2
+.page-header Import
 
-form.flex.flex-column(
+form(
   hx-encoding="multipart/form-data"
 )
-  .w-100
-    .fl.w-20 Select file
-    label.fl.w-80(for="file")
+  .flex.flex-wrap
+    .w-20 Select file
+    label.w-80(for="file")
       input(
         type="file"
         name="file"
         id="file"
         accept=".csv"
       )
-  .w-100.mt2
-    .fl.w-20 Delimiter
-    .fl.w-20
+  .flex.flex-wrap.mt2
+    .w-20 Delimiter
+    .w-20
       select(name="delimiter")
         option(value=",") ,
         option(value=";") ;
-    .fl.w-60
+    .w-60
       .flex.justify-between
         .fl
-        a.fl.link.ba.br2.tc.dim.pointer.blue.pv1.ph3(
+        a.fl.link.button(
           hx-post="/page/import/select_columns"
           hx-target="#message"
           type="submit"
         ) Read Columns
-  .w-100.mt2
-    .flex.justify-between
+  .flex.justify-between.mt2
       .fl
-      a.fl.link.br2.tc.dim.pointer.pv1.ph3.near-white.bg-blue(
+      a.fl.link.button.primary(
         hx-post="/page/import"
         hx-target="#message"
         type="submit"

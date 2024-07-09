@@ -1,11 +1,9 @@
 include ../mixin/mixin
 
-.f2.fw6.black-80.pb3 {{.title}} ({{.books | len}})
-.mt3
+.page-header {{.title}} ({{.books | len}})
 
-section
-  if .books | len
-    +book_list(.books)
-  else
-    mark.db.pa2.br2.tc
-      | Congratulations! You've finished all books! 
+if .books | len
+  +book_list(.books)
+else
+  .info-banner
+    | Congratulations! You've finished all books! 
