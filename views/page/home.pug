@@ -1,13 +1,13 @@
 include ../mixin/mixin
 
-.f3.gray
-  | You've 
+.f3.gray.lh-solid.dib
+  p You have
     mark.gray.pl1 finished 
     mark
       a.gray.hover-blue.link.f-subheadline.ph3.underline(href="/page/book/year/{{this_year}}") {{.finished_this_year}}
     mark.gray.pr1 books in {{this_year}}
-    span ,
-    span.f1 {{.counts.Reading}}
+    | and have &nbsp;
+    span.f2 {{.counts.Reading}}
     span ongoing.
 
 .mt4
