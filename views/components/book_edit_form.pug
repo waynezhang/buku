@@ -1,0 +1,113 @@
+div(
+  x-init="update()"
+  x-data=`{
+    authors_candidates: [],
+    series_candidates: [],
+    async update() {
+      this.authors_candidates = await $json("/api/authors.json")
+      this.series_candidates = await $json("/api/series.json")
+    },
+    fill(title, author, isbn) {
+      this.form_data.title = title
+      this.form_data.author = author
+      this.form_data.isbn = isbn
+    },
+  }`
+)
+  .page-header(x-text="page_title")
+
+  .flex.flex-wrap
+    .w-100.w-20-ns
+      label(for="title") Title
+    .w-100.w-80-ns
+      input.w-100(type="text" name="title" placeholder="Title" x-model="form_data.title")
+  .flex.flex-wrap.mt2
+    .w-100.w-20-ns
+      label(for="author") Author
+    .w-100.w-80-ns
+      input.w-100(type="text" name="author" placeholder="Author" x-model="form_data.author" list="author_list")
+  .flex.flex-wrap.mt2
+    .w-100.w-20-ns
+      label(for="Series") Series
+    .w-100.w-80-ns
+      input.w-100(type="text" name="series" placeholder="Series" x-model="form_data.series" list="series_list")
+  .flex.flex-wrap.mt2
+    .w-100.w-20-ns
+      label(for="ISBN") ISBN
+    .w-100.w-80-ns
+      input.w-100(type="text" name="isbn" placeholder="ISBN" x-model="form_data.isbn")
+  .flex.flex-wrap.mt2
+    .w-100.w-20-ns
+      label(for="startedAt") Started
+    .w-100.w-80-ns
+      input.w-100(type="text" name="startedAt" placeholder="0000-00-00" x-model="form_data.started_at")
+  .flex.flex-wrap.mt2
+    .w-100.w-20-ns
+      label(for="finishedAt") Finished
+    .w-100.w-80-ns
+      input.w-100(type="text" name="finishedAt" placeholder="0000-00-00" x-model="form_data.finished_at")
+  .flex.flex-wrap.mt2
+    label(for="comments") Comments
+  .flex.flex-wrap.mt2
+    textarea.w-100.h4.br2.ba.b--black-20(name="comments" x-model="form_data.comments")
+
+  .flex.flex-wrap.mt3
+    a.link.button.primary(
+      @click="submit"
+    ) Submit
+
+  .mt2
+
+  details
+    summary Search from Google
+    div.mt2((
+      x-data=`{
+        query: "",
+        max_results: 10,
+        google_books: [],
+        async search() {
+          this.google_books = await $json("/api/google_book_search.json"
+            + "?query=" + this.query
+            + "&max_results=" + this.max_results,
+          )
+        },
+      }`
+    )
+      .flex.justify-between
+        .w-100.w-80-ns
+          input.w-100(
+            x-model="query"
+            @input.debounce.300ms="search"
+            placeholder="intitle:xxx inauthor:xxxx isbn:xxx"
+          )
+        .plk
+          select(
+            x-model="max_results"
+            @input.debounce.300ms="search"
+          )
+            option(value="10") 10
+            option(value="20") 20
+            option(value="30") 30
+            option(value="40") 40
+
+      p
+        template(x-for="g in google_books")
+          .bb.bw1.bw0-ns.b--black-025.mb3.mb0-ns
+            a.link.pointer.blue(
+              @click="fill(g.title, g.author, g.isbn)"
+              x-text="g.title + (g.author ? (' / ' + g.author) : '')"
+            )
+            template(x-if="g.info_link")
+              small
+                a.blue.link.pointer(
+                  x-bind:href="g.info_link"
+                  target="_blank"
+                ) (link)
+
+  datalist(id="author_list")
+    template(x-for="author in authors_candidates")
+      option(x-bind:value="author")
+
+  datalist(id="series_list")
+    template(x-for="series in series_candidates")
+      option(x-bind:value="series")

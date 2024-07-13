@@ -12,17 +12,17 @@ const (
 )
 
 type Book struct {
-	ID         uint
-	Title      string
-	Author     string
-	Series     string
-	ISBN       string
-	Comments   string
-	Status     string     `gorm:"default:to-read"`
-	StartedAt  *time.Time `gorm:"type:date"`
-	FinishedAt *time.Time `gorm:"type:date"`
-	CreatedAt  time.Time
-	UpdatedAt  time.Time
+	ID         uint       `json:"id"`
+	Title      string     `json:"title"`
+	Author     string     `json:"author"`
+	Series     string     `json:"series"`
+	ISBN       string     `json:"isbn"`
+	Comments   string     `json:"comments"`
+	Status     string     `json:"status" gorm:"default:to-read"`
+	StartedAt  *time.Time `json:"started_at" gorm:"type:date"`
+	FinishedAt *time.Time `json:"finished_at" gorm:"type:date"`
+	CreatedAt  time.Time  `json:"created_at"`
+	UpdatedAt  time.Time  `json:"updated_at"`
 }
 
 func (b *Book) Validate() []string {

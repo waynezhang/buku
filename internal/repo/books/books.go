@@ -13,15 +13,15 @@ import (
 type ReadStatus string
 
 type StatRecord struct {
-	ToRead   int64
-	Reading  int64
-	Finished int64
+	ToRead   int64 `json:"to_read"`
+	Reading  int64 `json:"reading"`
+	Finished int64 `json:"finished"`
 }
 
 type YearRecord struct {
-	Year  int
-	Count int
-	Ratio int
+	Year  int `json:"year"`
+	Count int `json:"count"`
+	Ratio int `json:"ratio"`
 }
 
 func Create(db *gorm.DB, book *models.Book) (*models.Book, error) {

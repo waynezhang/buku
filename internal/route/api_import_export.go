@@ -7,7 +7,6 @@ import (
 	"time"
 	"waynezhang/buku/internal/models"
 	"waynezhang/buku/internal/repo/books"
-	"waynezhang/buku/internal/route/urls"
 
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
@@ -23,28 +22,13 @@ const (
 	CSV_COLUMN_Finished = "Finished"
 )
 
-func loadPageImportExportRoutes(f *fiber.App, db *gorm.DB) {
-	f.Get(urls.URL_IMPORT_PAGE, func(c *fiber.Ctx) error {
-		return render(c, "page/import", fiber.Map{})
-	})
-	f.Get(urls.URL_EXPORT_PAGE, func(c *fiber.Ctx) error {
-		return handleCSVExportRequest(c, db)
-	})
-	f.Post(urls.URL_IMPORT_RQUEST, func(c *fiber.Ctx) error {
-		return handleCSVImportRequest(c, db)
-	})
-	f.Post(urls.URL_IMPORT_SELECT_COLUMN_REQUEST, func(c *fiber.Ctx) error {
-		return handleCSVImportSelectColumnsRequest(c)
-	})
-}
-
-func handleCSVImportSelectColumnsRequest(c *fiber.Ctx) error {
+func apiImportReadColumns(c *fiber.Ctx) error {
 	err := withCSVFileReader(c, func(r csv.Reader) error {
 		columns, err := r.Read()
 		if err != nil {
 			return err
 		}
-		return render(c, "partials/import_column_options", fiber.Map{
+		return c.JSON(map[string]interface{}{
 			"presets": []string{
 				CSV_COLUMN_Title,
 				CSV_COLUMN_Author,
@@ -54,16 +38,16 @@ func handleCSVImportSelectColumnsRequest(c *fiber.Ctx) error {
 				CSV_COLUMN_Started,
 				CSV_COLUMN_Finished,
 			},
-			"columns": append([]string{"-"}, columns...)},
-		)
+			"columns": append([]string{"-"}, columns...),
+		})
 	})
 	if err != nil {
-		return renderError(c, err.Error())
+		return renderJSONError(c, err.Error())
 	}
 	return nil
 }
 
-func handleCSVImportRequest(c *fiber.Ctx, db *gorm.DB) error {
+func apiImport(c *fiber.Ctx, db *gorm.DB) error {
 	findColumnIdx := func(c *fiber.Ctx, name string, columns []string) int {
 		colName := c.FormValue(name)
 		return slices.Index(columns, colName)
@@ -127,14 +111,14 @@ func handleCSVImportRequest(c *fiber.Ctx, db *gorm.DB) error {
 			total += 1
 			_, _ = books.Create(db, &b)
 		}
-		return render(c, "partials/import_result", fiber.Map{
-			"total":   total,
-			"succeed": succeed,
-			"failed":  failed,
+		return c.JSON(map[string]interface{}{
+			"total":     total,
+			"succeeded": succeed,
+			"failed":    failed,
 		})
 	})
 	if err != nil {
-		return renderError(c, err.Error())
+		return renderJSONError(c, err.Error())
 	}
 	return nil
 }
@@ -195,5 +179,6 @@ func handleCSVExportRequest(c *fiber.Ctx, db *gorm.DB) error {
 
 	now := time.Now().Format("2006-01-02")
 	c.Attachment("buku-" + now + ".csv")
+
 	return c.Send(b.Bytes())
 }

@@ -1,37 +1,64 @@
-include ../mixin/mixin
+div(
+  x-show="loaded"
+  x-data=`{
+    home: {
+      counts: {},
+      reading_books: [],
+      year_records: [],
+    },
+    async update() {
+      this.home = await $json("/api/home.json")
+      this.loaded = true
+    },
+  }`
+  x-init="update()"
+)
 
-.f3.gray.lh-solid.dib
-  p You have
-    mark.gray.pl1 finished 
-    mark
-      a.gray.hover-blue.link.f-subheadline.ph3.underline(href="/page/book/year/{{this_year}}") {{.finished_this_year}}
-    mark.gray.pr1 books in {{this_year}}
-    | and have &nbsp;
-    span.f2 {{.counts.Reading}}
-    span ongoing.
+  p.f3.gray.lh-solid.dib
+    | You have
+      mark.gray.pl1 finished 
+      mark
+        a.gray.hover-blue.link.f-subheadline.ph3.underline(
+          x-bind:href="'/page/book/year/' + home.year"
+          x-text="home.finished_this_year"
+        )
+      mark.gray.pr1 books in 
+        span(x-text="home.year")
+      | and have &nbsp;
+      span.f2(x-text="home.counts.reading")
+      span ongoing.
 
-.mt4
+  .mt4
 
-.sub-page-header Reading
-if .reading_books | len
-  ul.list.pl0
-    for _ in .reading_books
-      +book_item(.)
-else
-  .black-50.pb3.mv2
-    | Let's start reading!
+  .sub-page-header Reading
 
-.mt4
+  template(x-if="home.reading_books.length == 0")
+    .black-50.pb3.mv2
+      | Let's start reading!
 
-.sub-page-header History
-if .yearRecords | len
-  for _ in .yearRecords
-    .flex.items-center.lh-title
-      .w-20
-        a.f4.blue.link(href="/page/book/year/{{.Year}}") {{.Year}}
-        span.f6 ({{.Count}})
-      .w-80
-          meter.w-100.dib(min="0" max="100" value="{{.Ratio}}")
-else
-  .black-50.pb3.mv2
-    | No reading history yet.
+  template(x-if="home.reading_books.length > 0")
+    template(x-for="book in home.reading_books")
+      include ../components/book_item
+
+  .mt4
+
+  .sub-page-header History
+
+  template(x-if="home.year_records.length > 0")
+    template(x-for="record in home.year_records")
+      .flex.items-center.lh-title
+        .w-20
+          a.f4.blue.link(
+            x-bind:href="'/page/book/year/' + record.year"
+            x-text="record.year"
+          )
+          span.f6(x-text="'(' + record.count + ')'")
+        .w-80
+            meter.w-100.dib(
+              min="0"
+              max="100"
+              x-bind:value="record.ratio")
+
+  template(x-if="home.year_records.length == 0")
+    .black-50.pb3.mv2
+      | No reading history yet.

@@ -1,0 +1,23 @@
+div(
+  x-show="loaded"
+  x-data=`{
+    loaded: false,
+    books: [],
+    async update() {
+      this.books = await $json("/api/books/to-read.json")
+      this.loaded = true
+    }
+  } `
+  x-init="update()"
+)
+  .page-header(
+    x-text="'Backlog (' + books.length + ')'"
+  )
+
+  template(x-if="books.length == 0")
+   .info-banner
+     | Congratulations! You've finished all books! 
+
+  template(x-if="books.length > 0")
+    template(x-for="book in books")
+      include ../components/book_item

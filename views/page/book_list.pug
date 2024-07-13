@@ -1,9 +1,0 @@
-include ../mixin/mixin
-
-.page-header {{.title}} ({{.books | len}})
-
-if .books | len
-  +book_list(.books)
-else
-  .info-banner
-    | Congratulations! You've finished all books! 

@@ -10,11 +10,11 @@ import (
 )
 
 type Book struct {
-	Id       int
-	Title    string
-	Author   string
-	ISBN     string
-	InfoLink string
+	Id       int    `json:"id"`
+	Title    string `json:"title"`
+	Author   string `json:"author"`
+	ISBN     string `json:"isbn"`
+	InfoLink string `json:"info_link"`
 }
 
 type volume struct {

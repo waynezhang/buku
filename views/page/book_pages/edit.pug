@@ -1,0 +1,49 @@
+div(
+  x-show="loaded",
+  x-init="update($router.params.id)",
+  x-data=`{
+    loaded: false,
+    page_title: "",
+    error_message: "",
+    id: "",
+    form_data: {
+      title: "",
+      author: "",
+      series: "",
+      isbn: "",
+      started_at: "",
+      finished_at: "",
+      comments: "",
+    },
+    created_at: "",
+    async update(id) {
+      this.id = id
+      const book = await $json("/api/book/" + id + ".json")
+
+      this.page_title = book.title
+      this.created_at = book.created_at
+
+      this.form_data.title = book.title
+      this.form_data.author = book.author
+      this.form_data.series = book.series
+      this.form_data.isbn = book.isbn
+      this.form_data.started_at = formatDate(book.started_at)
+      this.form_data.finished_at = formatDate(book.finished_at)
+      this.form_data.comments = book.comments
+
+      this.loaded = true
+    },
+    async submit() {
+      this.error_message = ""
+      $json("/api/book/" + this.id + ".json", "POST", this.form_data)
+        .then(book => {
+          $router.navigate("/page/book/" + book.id)
+        }).catch(e => {
+          this.error_message = e.message
+        })
+    },
+  }`
+)
+  include ../../components/book_edit_form
+
+  p.error(x-text="error_message")

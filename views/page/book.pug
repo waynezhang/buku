@@ -1,53 +1,101 @@
-.page-header {{.book.Title}}
+div(
+  x-show="loaded"
+  x-data=`{
+    loaded: false,
+    book: {},
+    id: "",
+    async update(id) {
+      this.id = id
+      this.book = await $json("/api/book/" + id + ".json")
+      this.loaded = true
+    },
+    async change_status(status) {
+      $json("/api/book/" + this.id + "/status.json", "POST", {
+        status: status
+      }).then(_ => {
+        this.update(this.id)
+      })
+    },
+    async delete_book() {
+      const confirmed = confirm("Are your sure to delete this book?");
+      if (!confirmed) { return }
+      $json("/api/book/" + this.id + ".json", "DELETE")
+        .then(_ => {
+          $router.navigate("/page/home")
+        })
+    },
+  }`
+  x-init="update($router.params.id)"
+)
+  .page-header(x-text="book.title")
 
-.flex.flex-wrap.pb2
-  .w-100.w-20-ns Author
-  a.w-100.w-80-ns.link.blue(href="/page/author/{{.book.Author}}") {{.book.Author}}
-.flex.flex-wrap.pb2
-  .w-100.w-20-ns Series
-  a.w-100.w-80-ns.link.blue(href="/page/series/{{.book.Series}}") {{.book.Series}}
-.flex.flex-wrap.pb2
-  .w-100.w-20-ns ISBN
-  .w-100.w-80-ns {{.book.ISBN}}
-.flex.flex-wrap.pb2
-  .w-100.w-20-ns Started
-  .w-100.w-80-ns {{.book.StartedAt | date_fmt}}
-.flex.flex-wrap.pb2
-  .w-100.w-20-ns Finished
-  .w-100.w-80-ns  {{.book.FinishedAt | date_fmt}}
-.flex.flex-wrap.pb2
-  .w-100.w-20-ns Created
-  .w-100.w-80-ns  {{.book.CreatedAt | date_fmt}}
-.flex.flex-wrap.pb2
-  .w-100.w-20-ns Comments
-  .w-100.w-80-ns.black-60 {{.book.Comments}}
+  .flex.flex-wrap.pb2
+    .w-100.w-20-ns Author
+    a.w-100.w-80-ns.link.blue(
+      x-bind:href="'/page/author/' + book.author"
+      x-text="book.author"
+    )
+  .flex.flex-wrap.pb2
+    .w-100.w-20-ns Series
+    template(x-if="book.series")
+      a.w-100.w-80-ns.link.blue(
+        x-bind:href="'/page/series/' + book.series"
+        x-text="book.series"
+      )
+    template(x-if="!book.series")
+      .w-100.w-80-ns &nbsp;
+  .flex.flex-wrap.pb2
+    .w-100.w-20-ns ISBN
+    template(x-if="book.isbn")
+      .w-100.w-80-ns(x-text="book.isbn")
+    template(x-if="!book.isbn")
+      .w-100.w-80-ns &nbsp;
+  .flex.flex-wrap.pb2
+    .w-100.w-20-ns Started
+    template(x-if="book.started_at")
+      .w-100.w-80-ns(x-text="formatDate(book.started_at)")
+    template(x-if="!book.started_at")
+      .w-100.w-80-ns &nbsp;
+  .flex.flex-wrap.pb2
+    .w-100.w-20-ns Finished
+    template(x-if="book.finished_at")
+      .w-100.w-80-ns(x-text="formatDate(book.finished_at)")
+    template(x-if="!book.finished_at")
+      .w-100.w-80-ns &nbsp;
+  .flex.flex-wrap.pb2
+    .w-100.w-20-ns Created
+    template(x-if="book.created_at")
+    .w-100.w-80-ns(x-text="formatDate(book.created_at)")
+    template(x-if="!book.created_at")
+      .w-100.w-80-ns &nbsp;
+  .flex.flex-wrap.pb2
+    .w-100.w-20-ns Comments
+    template(x-if="book.comments")
+      .w-100.w-80-ns.black-60(x-text="book.comments")
+    template(x-if="!book.comments")
+      .w-100.w-80-ns &nbsp;
 
-.mt3
+  .mt3
 
-if eq .book.Status "reading"
-  a.link.button.mr2(
-    hx-post="/page/book/{{.book.ID}}/status/to-read"
-    hx-target="#message"
-  ) Stop
-  a.link.button.primary.mr2(
-    hx-post="/page/book/{{.book.ID}}/status/read"
-    hx-target="#message"
-  ) Finish
+  template(x-if="book.status == 'reading'")
+    a.link.button.mr2(
+      @click="change_status('to-read')"
+    ) Stop
 
-if eq .book.Status "to-read"
-  a.link.button.primary.mr2(
-    hx-post="/page/book/{{.book.ID}}/status/reading"
-    hx-target="#message"
-  ) Start
+  template(x-if="book.status == 'reading'")
+    a.link.button.primary.mr2(
+      @click="change_status('read')"
+    ) Finish
 
-a.link.button.destructive.mr2(
-  hx-delete="/page/book/{{.book.ID}}"
-  hx-confirm="Are you sure to delete {{.book.Title}}"
-  hx-target="#message"
-) Delete
+  template(x-if="book.status == 'to-read'")
+    a.link.button.primary.mr2(
+      @click="change_status('reading')"
+    ) Start
 
-a.link.blue.pv1.ph2.mr2(
-  href="/page/book/{{.book.ID}}/edit#"
-) Edit
+  a.link.button.destructive.mr2(
+    @click="delete_book"
+  ) Delete
 
-p#message
+  a.link.blue.pv1.ph2.mr2(
+    x-bind:href="'/page/book/' + book.id + '/edit'"
+  ) Edit

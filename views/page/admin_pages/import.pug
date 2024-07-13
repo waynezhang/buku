@@ -1,0 +1,103 @@
+div(
+  x-data=`{
+    column_info: {},
+    csv_file: null,
+    delimiter: ",",
+    columns_loaded: false,
+    column_map: {},
+    result: "",
+    error_message: "",
+    async readColumns() {
+      this.reset_message()
+
+      const fd = new FormData();
+      fd.append("file", this.csv_file)
+      fd.append("delimiter", this.delimiter)
+      fetch('/api/import/read_columns', {
+        method: 'POST',
+        body: fd,
+      }).then(async resp => {
+        if (!resp.ok) {
+          message = (await resp.json()).message
+          throw new Error(message)
+        }
+        return resp.json()
+      }).then(json => {
+        this.column_info = json
+        this.columns_loaded = true
+      }).catch(e => {
+        this.error_message = e.message
+      })
+    },
+    async upload() {
+      this.reset_message()
+
+      const fd = new FormData()
+      document.querySelectorAll("[data-type=column]").forEach(s => {
+        fd.append(s.name, s.value)
+      })
+      fd.append("file", this.csv_file)
+      fd.append("delimiter", this.delimiter)
+      fetch('/api/import', {
+        method: 'POST',
+        body: fd,
+      }).then(async resp => {
+        json = await resp.json()
+        this.result = "Imported " + json.succeeded + " records, " + json.failed + " failed."
+      }).catch(e => {
+        this.error_message = e.message
+      })
+    },
+    reset_message() {
+      this.result = ""
+      this.error_message = ""
+    },
+  }`
+)
+  .page-header Import
+
+  .flex.flex-wrap
+    .w-20 Select file
+    label.w-80(for="file")
+      input(
+        type="file"
+        accept=".csv"
+        x-ref="file"
+        @change="csv_file = $refs.file.files[0]"
+      )
+  .flex.flex-wrap.mt2
+    .w-20 Delimiter
+    .w-20
+      select(x-model="delimiter")
+        option(value=",") ,
+        option(value=";") ;
+    .w-60
+      .flex.justify-between
+        .fl
+        a.fl.link.button(
+          @click="readColumns()"
+        ) Read Columns
+
+  template(x-if="columns_loaded")
+    .div.mt2
+      .flex.flex-column.bg-black-05.br2
+        template(x-for="p in column_info.presets")
+          .w-100.pa2
+            label.fl.w-20(x-text="p")
+            select.fl.w-80(
+              data-type="column"
+              x-bind:name="p"
+            )
+              template(x-for="c in column_info.columns")
+                option(
+                  x-bind:value="c"
+                  x-text="c"
+                )
+      .flex.justify-between.mt2
+        .fl
+        a.fl.link.button.primary(
+          @click="upload()"
+        ) Import
+
+  p(x-text="result")
+  p.error(x-text="error_message")

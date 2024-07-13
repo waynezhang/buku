@@ -1,26 +1,32 @@
-.page-header Admin
+div(
+  x-data=`{
+    error_message: "",
+    async deleteAll() {
+      const confirmed = confirm("Are your sure to delete all data?");
+      if (!confirmed) { return }
+      await $json("/api/delete_all.json", "POST")
+    },
+  }`
+)
+  .page-header Admin
 
-.sub-page-header Data Management
+  .sub-page-header Data Management
 
-a.link.blue.mr3(href="/page/book/all#") Books
-a.link.blue.mr3(href="/page/author/all#") Authors
-a.link.blue.mr3(href="/page/series/all#") Series
+  a.link.blue.mr3(href="/page/books") Books
+  a.link.blue.mr3(href="/page/authors") Authors
+  a.link.blue.mr3(href="/page/serieses") Series
 
-.mt4
+  .mt4
 
-.sub-page-header Import/Export
+  .sub-page-header Import/Export
 
-a.link.blue.mr3(href="/page/import#") Import
-a.link.mr3.button(href="/page/export" hx-boost="false") Export
+  a.link.blue.mr3(href="/page/admin/import") Import
+  a.link.mr3.button(target="_" href="/api/export") Export
 
-.mt4
+  .mt4
 
-.sub-page-header Danger Zone
+  .sub-page-header Danger Zone
 
-a.pointer.link.button.destructive(
-  hx-post="/page/admin/nuke"
-  hx-confirm="Ar you sure to nuke the database?"
-  hx-target="#message"
-) Delete all data
-
-p#message
+  a.pointer.link.button.destructive(
+    @click="deleteAll()"
+  ) Delete all data

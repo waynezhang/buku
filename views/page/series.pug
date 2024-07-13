@@ -1,19 +1,42 @@
-include ../mixin/mixin
+div(
+  x-show="loaded"
+  x-init="update($router.params.name)"
+  x-data=`{
+    loaded: false,
+    name: "",
+    books: [],
+    error_message: "",
+    async update(name) {
+      this.name = name
+      this.books = await $json("/api/books/series/" + name + ".json")
+      this.loaded = true
+    },
+    async rename() {
+      new_name = (prompt("Rename series name", this.name) || "").trim()
+      if (!new_name || new_name == this.name) { return }
 
-.page-header {{.name}}
+      $json(
+        "/api/series/" + this.name + ".json",
+        "POST",
+        { name: new_name },
+      ).then(_ => {
+        $router.navigate("/page/series/" + new_name)
+        this.update(new_name)
+      }).catch(e => {
+        this.error_message = e.message
+      })
+    },
+  }`
+)
+  .page-header(x-text="name + ' (' + books.length + ')'")
 
-.sub-page-header All books ({{.books|len}})
+  .sub-page-header All books
 
-ul.list.pl0
-  for _ in .books
-    +book_item_with_tag(.)
+  template(x-for="book in books")
+    include ../components/book_item
 
-.sub-page-header Actions
+  .sub-page-header Actions
 
-a.link.button(
-  hx-post="/page/series/{{.name}}/rename"
-  hx-prompt="New name"
-  hx-target="#message"
-) Rename
+  a.link.button(@click="rename()") Rename
 
-p#message
+  p.error(x-text="error_message")

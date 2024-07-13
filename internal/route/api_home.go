@@ -9,7 +9,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func renderHomePage(c *fiber.Ctx, db *gorm.DB) error {
+func apiHome(c *fiber.Ctx, db *gorm.DB) error {
 	counts := books.CountAll(db)
 	stat := books.CountStatInYears(db)
 	reading_books := books.GetByStatus(db, models.STATUS_READING)
@@ -21,10 +21,11 @@ func renderHomePage(c *fiber.Ctx, db *gorm.DB) error {
 			break
 		}
 	}
-	return render(c, "page/home", fiber.Map{
+	return c.JSON(fiber.Map{
 		"counts":             counts,
-		"yearRecords":        stat,
+		"year_records":       stat,
 		"reading_books":      reading_books,
+		"year":               year,
 		"finished_this_year": finishedThisYear,
 	})
 }

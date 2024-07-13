@@ -1,0 +1,39 @@
+div(
+  x-show="loaded"
+  x-init="update()"
+  x-data=`{
+    loaded: false,
+    name: "",
+    order: "asc",
+    authors: [],
+    async update() {
+      this.authors = await $json("/api/authors.json?name=" + this.name + "&order=" + this.order)
+      this.loaded = true
+    }
+  }`
+)
+  .page-header(x-text="'Authors (' + authors.length + ')'")
+
+  .flex
+    input.w-100(
+      x-model="name"
+      placeholder="Author name"
+      @input.debounce.300ms="update"
+    )
+
+  .flex.mt2.justify-between
+    label Order by name
+      select.ml2(
+        x-model="order"
+        @change="update"
+      )
+        option(value="asc") Asc
+        option(value="desc") Desc
+
+  .mt3
+    template(x-for="author in authors")
+      .bb.bw1.bw0-ns.b--black-025.mb3.mb0-ns
+        a.link.blue(
+          x-bind:href="'/page/author/' + author"
+          x-text="author"
+        )

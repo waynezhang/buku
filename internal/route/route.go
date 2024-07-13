@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"time"
 	"waynezhang/buku/internal/infra/config"
-	"waynezhang/buku/internal/models"
-	"waynezhang/buku/internal/route/urls"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
@@ -37,21 +35,91 @@ func Load(cfg *config.Config, db *gorm.DB) *fiber.App {
 	f.Use(logger.New())
 
 	f.Get("/", func(c *fiber.Ctx) error { return c.Redirect("/page/home") })
+
 	f.Static("/", "./static")
 	f.Get("/health", func(c *fiber.Ctx) error { return c.SendString("OK") })
 
-	f.Get(urls.URL_HOME, func(c *fiber.Ctx) error {
-		return renderHomePage(c, db)
-	})
-	f.Get(urls.URL_BACKLOG, func(c *fiber.Ctx) error {
-		return renderBookListPage(c, db, "Backlog", models.STATUS_TO_READ)
+	f.Get(API_HOME, func(c *fiber.Ctx) error {
+		return apiHome(c, db)
 	})
 
-	loadPageBookRoutes(f, db)
-	loadPageAuthorRoutes(f, db)
-	loadPageSeriesRoutes(f, db)
-	loadPageAdminRoutes(f, db)
-	loadPageImportExportRoutes(f, db)
+	// books
+	f.Get(API_BOOKS, func(c *fiber.Ctx) error {
+		return apiBooks(c, db)
+	})
+	f.Get(API_BOOKS_BY_STATUS, func(c *fiber.Ctx) error {
+		return apiBooksByStatus(c, db)
+	})
+	f.Get(API_BOOKS_BY_YEAR, func(c *fiber.Ctx) error {
+		return apiBooksByYear(c, db)
+	})
+	f.Get(API_BOOKS_BY_AUTHOR, func(c *fiber.Ctx) error {
+		return apiBooksByAuthor(c, db)
+	})
+	f.Get(API_BOOKS_BY_SERIES, func(c *fiber.Ctx) error {
+		return apiBooksBySeries(c, db)
+	})
+
+	// book
+	f.Get(API_BOOK_BY_ID, func(c *fiber.Ctx) error {
+		return apiBookById(c, db)
+	})
+	f.Delete(API_BOOK_BY_ID, func(c *fiber.Ctx) error {
+		return apiDeleteBookById(c, db)
+	})
+	f.Post(API_CREATE_BOOK, func(c *fiber.Ctx) error {
+		return apiCreateBook(c, db)
+	})
+	f.Post(API_UPDATE_BOOK, func(c *fiber.Ctx) error {
+		return apiUpdateBook(c, db)
+	})
+	f.Post(API_BOOK_CHANGE_STATUS, func(c *fiber.Ctx) error {
+		return apiBookChangeStatus(c, db)
+	})
+
+	// google book
+	f.Get(API_GOOGLE_BOOK_SEARCH, func(c *fiber.Ctx) error {
+		return apiGoogleBookSearch(c)
+	})
+
+	// authors
+	f.Get(API_AUTHORS, func(c *fiber.Ctx) error {
+		return apiAuthors(c, db)
+	})
+	f.Post(API_RENAME_AUTHOR, func(c *fiber.Ctx) error {
+		return apiRenameAuthor(c, db)
+	})
+
+	// series
+	f.Get(API_SERIES, func(c *fiber.Ctx) error {
+		return apiSeries(c, db)
+	})
+	f.Post(API_RENAME_SERIES, func(c *fiber.Ctx) error {
+		return apiRenameSeries(c, db)
+	})
+
+	// admin
+	f.Post(API_DELETE_ALL, func(c *fiber.Ctx) error {
+		return apiDeleteAll(c, db)
+	})
+
+	// import
+	f.Post(API_ADMIN_IMPORT_READ_COLUMNS, func(c *fiber.Ctx) error {
+		return apiImportReadColumns(c)
+	})
+	f.Post(API_ADMIN_IMPORT, func(c *fiber.Ctx) error {
+		return apiImport(c, db)
+	})
+
+	// export
+	f.Get(API_ADMIN_EXPORT, func(c *fiber.Ctx) error {
+		return handleCSVExportRequest(c, db)
+	})
+
+	// fallback
+	f.Group("/page", func(c *fiber.Ctx) error {
+		return render(c, "page/index", fiber.Map{})
+	})
 
 	return f
 }

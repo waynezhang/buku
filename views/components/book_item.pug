@@ -1,0 +1,18 @@
+.bb.bw1.bw0-ns.b--black-025.mb3.mb0-ns
+  a.link.blue(
+    x-bind:href="'/page/book/' + book.id"
+    x-text="book.title"
+  )
+  template(x-if="book.author")
+    span
+      span /
+      span
+        a.link.blue(
+          x-bind:href="'/page/author/' + book.author"
+          x-text="book.author"
+        )
+  template(x-if="show_tag")
+    span.tag(
+      :class="book.status"
+      x-text="'#' + book.status"
+    )
