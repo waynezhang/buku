@@ -2,7 +2,7 @@ include ../mixin/mixin
 
 .page-header {{.name}}
 
-.sub-page-header All books
+.sub-page-header All books ({{.books | len}})
 
 ul.list.pl0
   for _ in .books

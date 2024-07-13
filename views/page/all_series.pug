@@ -1,7 +1,6 @@
-.page-header Series
+.page-header Series ({{.series | len}})
 
 ul.list.pl0
   for _ in .series
     li.bb.bw1.bw0-ns.b--black-025.mb3.mb0-ns
       a.link.blue(href="/page/series/{{.}}") {{.}}
-.mt2.black-80.tr {{.series | len}} found.
