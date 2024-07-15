@@ -3,7 +3,6 @@ module waynezhang/buku
 go 1.22.3
 
 require (
-	github.com/angelofallars/htmx-go v0.5.0
 	github.com/gofiber/fiber/v2 v2.52.5
 	github.com/gofiber/template/pug/v2 v2.1.6
 	github.com/joho/godotenv v1.5.1
