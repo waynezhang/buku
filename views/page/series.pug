@@ -32,7 +32,7 @@ div(
 
   .sub-page-header All books
 
-  template(x-for="book in books")
+  template(x-for="book in books" x-data="{ show_tag: false }")
     include ../components/book_item
 
   .sub-page-header Actions

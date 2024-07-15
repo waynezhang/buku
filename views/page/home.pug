@@ -1,6 +1,8 @@
 div(
   x-show="loaded"
+  x-init="update()"
   x-data=`{
+    loaded: false,
     home: {
       counts: {},
       reading_books: [],
@@ -11,24 +13,18 @@ div(
       this.loaded = true
     },
   }`
-  x-init="update()"
 )
 
-  p.f3.gray.lh-solid.dib
-    | You have
-      mark.gray.pl1 finished 
-      mark
-        a.gray.hover-blue.link.f-subheadline.ph3.underline(
-          x-bind:href="'/page/book/year/' + home.year"
-          x-text="home.finished_this_year"
-        )
-      mark.gray.pr1 books in 
-        span(x-text="home.year")
-      | and have &nbsp;
-      span.f2(x-text="home.counts.reading")
-      span ongoing.
-
-  .mt4
+  .page-header
+    a.f2.fw6.gray.link.hover-blue(
+      x-bind:href="'/page/book/year/' + home.year"
+      x-text="home.year"
+    )
+  .gray.dib.f4.mb4
+    span.f2(x-text="home.finished_this_year")
+    | &nbsp;finished,&nbsp;
+    span.f2(x-text="home.counts.reading")
+    | &nbsp;ongoing.
 
   .sub-page-header Reading
 
@@ -37,7 +33,7 @@ div(
       | Let's start reading!
 
   template(x-if="home.reading_books.length > 0")
-    template(x-for="book in home.reading_books")
+    template(x-for="book in home.reading_books" x-data="{ show_tag: false }")
       include ../components/book_item
 
   .mt4

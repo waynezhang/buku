@@ -23,5 +23,5 @@ div(
       .info-banner.mb4(
         x-text="'Nice! You have finished ' + books.length + ' book(s) this year.'"
       )
-      template(x-for="book in books")
+      template(x-for="book in books" x-data="{ show_tag: false }")
           include ../../components/book_item

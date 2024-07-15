@@ -19,5 +19,5 @@ div(
      | Congratulations! You've finished all books! 
 
   template(x-if="books.length > 0")
-    template(x-for="book in books")
+    template(x-for="book in books" x-data="{ show_tag: false }")
       include ../components/book_item

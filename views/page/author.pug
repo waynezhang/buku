@@ -1,5 +1,6 @@
 div(
   x-show="loaded"
+  x-init="update($router.params.name)"
   x-data=`{
     loaded: false,
     name: "",
@@ -26,13 +27,12 @@ div(
       })
     },
   }`
-  x-init="update($router.params.name)"
 )
   .page-header(x-text="name")
 
   .sub-page-header(x-text="'All books (' + books.length +  ')'")
 
-  template(x-for="book in books")
+  template(x-for="book in books" x-data="{ show_tag: false }")
     include ../components/book_item
 
   .sub-page-header Actions
