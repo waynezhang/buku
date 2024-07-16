@@ -17,21 +17,21 @@ div(
 
   .dib.mt3
 
-  .black-80.lh-solid
-    dl.dib.mr4
-      dd.ml0.f5 Year
+  .black-60.lh-solid
+    dl.dib.mr5
+      dd.ml0.f5.ft.mb1 Year
       dd.ml0.f2
-        a.b.black.link.hover-blue.black-80(
+        a.b.black-60.link.hover-blue(
           x-bind:href="'/page/book/year/' + home.year"
           x-text="home.year"
         )
     
-    dl.dib.mr4
-      dd.ml0.f5 Finished
+    dl.dib.mr5
+      dd.ml0.f5.ft.mb1 Finished
       dd.ml0.f2.b(x-text="home.finished_this_year")
 
     dl.dib
-      dd.ml0.f5 Ongoing
+      dd.ml0.f5.ft.mb1 Ongoing
       dd.ml0.f2.b(x-text="home.counts.reading")
 
   .dib.mb3

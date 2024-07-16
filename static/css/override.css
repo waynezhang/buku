@@ -1,3 +1,7 @@
+.palatino {
+  font-family: Palatino, Georgia, Lucida Bright, Book Antiqua, serif;
+}
+
 meter::-webkit-meter-bar {
   background: transparent;
 }
@@ -79,7 +83,7 @@ meter {
 
 .button:active {
   opacity: .8;
-  transition: opacity .15s ease-out
+  transition: opacity .15s ease-out;
 }
 
 .primary {
