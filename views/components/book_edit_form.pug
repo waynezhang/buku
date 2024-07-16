@@ -93,13 +93,13 @@ div(
       p
         template(x-for="g in google_books")
           .bb.bw1.bw0-ns.b--black-025.mb3.mb0-ns
-            a.link.pointer.blue(
+            a.link.blue(
               @click="fill(g.title, g.author, g.isbn)"
               x-text="g.title + (g.author ? (' / ' + g.author) : '')"
             )
             template(x-if="g.info_link")
               small
-                a.blue.link.pointer(
+                a.blue.link(
                   x-bind:href="g.info_link"
                   target="_blank"
                 ) (link)

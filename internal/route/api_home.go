@@ -10,22 +10,21 @@ import (
 )
 
 func apiHome(c *fiber.Ctx, db *gorm.DB) error {
-	counts := books.CountAll(db)
-	stat := books.CountStatInYears(db)
-	reading_books := books.GetByStatus(db, models.STATUS_READING)
 	year := time.Now().Year()
-	finishedThisYear := 0
+	stat := books.CountStatInYears(db)
+
+	this_year := books.YearRecord{Year: year}
 	for _, s := range stat {
 		if s.Year == year {
-			finishedThisYear = s.Count
+			this_year = s
 			break
 		}
 	}
+
 	return c.JSON(fiber.Map{
-		"counts":             counts,
-		"year_records":       stat,
-		"reading_books":      reading_books,
-		"year":               year,
-		"finished_this_year": finishedThisYear,
+		"year_records":        stat,
+		"current_year_record": this_year,
+		"reading_books":       books.GetByStatus(db, models.STATUS_READING),
+		"counts":              books.CountAll(db),
 	})
 }

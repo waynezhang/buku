@@ -7,6 +7,7 @@ div(
       counts: {},
       reading_books: [],
       year_records: [],
+      current_year_record: [],
     },
     async update() {
       this.home = await $json("/api/home.json")
@@ -18,17 +19,17 @@ div(
   .dib.mt3
 
   .black-60.lh-solid
-    dl.dib.mr5
+    dl.dib.mr4.mr5-ns
       dd.ml0.f5.ft.mb1 Year
       dd.ml0.f2
         a.b.black-60.link.hover-blue(
-          x-bind:href="'/page/book/year/' + home.year"
-          x-text="home.year"
+          x-bind:href="'/page/book/year/' + home.current_year_record.year"
+          x-text="home.current_year_record.year"
         )
     
-    dl.dib.mr5
+    dl.dib.mr4.mr5-ns
       dd.ml0.f5.ft.mb1 Finished
-      dd.ml0.f2.b(x-text="home.finished_this_year")
+      dd.ml0.f2.b(x-text="home.current_year_record.count")
 
     dl.dib
       dd.ml0.f5.ft.mb1 Ongoing

@@ -67,28 +67,35 @@ meter {
   padding-right: 1rem;
   cursor: pointer;
   opacity: 1;
-  color: #357edd;
+  color: rgb(0, 0, 0, 0.8);
+  background-color: rgba(0, 0, 0, .0125);
+  border-color: rgb(0, 0, 0, 0.2);
+  font-size: 0.9em;
 }
 
 .button,
 .button:focus,
 .button:hover {
-  transition: opacity .15s ease-in;
+  transition: background-color .15s ease-in;
 }
 
 .button:focus,
 .button:hover {
-  opacity: .5
+  background-color: rgba(0, 0, 0, .045);
 }
 
 .button:active {
-  opacity: .8;
   transition: opacity .15s ease-out;
 }
 
 .primary {
   background-color: #357edd;
   color: #f4f4f4;
+}
+
+.primary.button:focus,
+.primary.button:hover {
+  background-color: #2471d5;
 }
 
 .destructive {
