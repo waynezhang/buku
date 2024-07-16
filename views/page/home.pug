@@ -15,16 +15,26 @@ div(
   }`
 )
 
-  .page-header
-    a.f2.fw6.gray.link.hover-blue(
-      x-bind:href="'/page/book/year/' + home.year"
-      x-text="home.year"
-    )
-  .gray.dib.f4.mb4
-    span.f2.pr1(x-text="home.finished_this_year")
-    | &nbsp;finished,&nbsp;
-    span.f2.pr1(x-text="home.counts.reading")
-    | &nbsp;ongoing.
+  .dib.mt3
+
+  .black-80.lh-solid
+    dl.dib.mr4
+      dd.ml0.f5 Year
+      dd.ml0.f2
+        a.b.black.link.hover-blue.black-80(
+          x-bind:href="'/page/book/year/' + home.year"
+          x-text="home.year"
+        )
+    
+    dl.dib.mr4
+      dd.ml0.f5 Finished
+      dd.ml0.f2.b(x-text="home.finished_this_year")
+
+    dl.dib
+      dd.ml0.f5 Ongoing
+      dd.ml0.f2.b(x-text="home.counts.reading")
+
+  .dib.mb3
 
   .sub-page-header Reading
 
