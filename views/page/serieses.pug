@@ -15,6 +15,6 @@ div(
   template(x-for="s in series")
     .bb.bw1.bw0-ns.b--black-025.mb3.mb0-ns
       a.link.blue(
-        x-bind:href="'/page/series/' + s"
+        :href="'/page/series/' + s"
         x-text="s"
       )

@@ -30,13 +30,10 @@ div(
 )
   .page-header(x-text="name + ' (' + books.length + ')'")
 
-  .sub-page-header All books
-
   template(x-for="book in books" x-data="{ show_tag: false }")
     include ../components/book_item
 
-  .sub-page-header Actions
-
-  a.link.button(@click="rename()") Rename
+  .mt4.dib
+    a.link.button(@click="rename()") Rename
 
   p.error(x-text="error_message")

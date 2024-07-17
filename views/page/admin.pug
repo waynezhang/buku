@@ -12,21 +12,24 @@ div(
 
   .sub-page-header Data Management
 
-  a.link.blue.mr3(href="/page/books") Books
-  a.link.blue.mr3(href="/page/authors") Authors
-  a.link.blue.mr3(href="/page/serieses") Series
+  div
+    a.link.blue.mr3(href="/page/books") Books
+    a.link.blue.mr3(href="/page/authors") Authors
+    a.link.blue.mr3(href="/page/serieses") Series
 
-  .mt4
+  .space1
 
   .sub-page-header Import/Export
 
-  a.link.blue.mr3(href="/page/admin/import") Import
-  a.link.mr3.button(target="_" href="/api/export") Export
+  div
+    a.link.blue.mr3(href="/page/admin/import") Import
+    a.link.mr3.button(target="_" href="/api/export") Export
 
-  .mt4
+  .space1
 
   .sub-page-header Danger Zone
 
-  a.link.button.destructive(
-    @click="deleteAll()"
-  ) Delete all data
+  div
+    a.link.button.destructive(
+      @click="deleteAll()"
+    ) Delete all data

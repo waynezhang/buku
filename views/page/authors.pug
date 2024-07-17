@@ -14,14 +14,14 @@ div(
 )
   .page-header(x-text="'Authors (' + authors.length + ')'")
 
-  .flex
-    input.w-100(
-      x-model="name"
-      placeholder="Author name"
-      @input.debounce.300ms="update"
-    )
+  input.w-100(
+    x-model="name"
+    type="text"
+    placeholder="Author name"
+    @input.debounce.300ms="update"
+  )
 
-  .flex.mt2.justify-between
+  .dib.mt2
     label Order by name
       select.ml2(
         x-model="order"
@@ -34,6 +34,6 @@ div(
     template(x-for="author in authors")
       .bb.bw1.bw0-ns.b--black-025.mb3.mb0-ns
         a.link.blue(
-          x-bind:href="'/page/author/' + author"
+          :href="'/page/author/' + author"
           x-text="author"
         )

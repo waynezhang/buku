@@ -57,34 +57,30 @@ div(
   .page-header Import
 
   .flex.flex-wrap
-    .w-20 Select file
-    label.w-80(for="file")
-      input(
-        type="file"
-        accept=".csv"
-        x-ref="file"
-        @change="csv_file = $refs.file.files[0]"
-      )
-  .flex.flex-wrap.mt2
-    .w-20 Delimiter
-    .w-20
-      select(x-model="delimiter")
-        option(value=",") ,
-        option(value=";") ;
-    .w-60
-      .flex.justify-between
-        .fl
-        a.fl.link.button(
-          @click="readColumns()"
-        ) Read Columns
+    .w-30.dn.dib-ns CSV file
+    input.f6(
+      type="file"
+      accept=".csv"
+      x-ref="file"
+      @change="csv_file = $refs.file.files[0]"
+    )
+  .flex.flex-wrap.mt3
+    .w-30 Delimiter
+    select(x-model="delimiter")
+      option(value=",") ,
+      option(value=";") ;
+  .flex.flex-wrap.mt3
+    a.link.button(
+      @click="readColumns()"
+    ) Read Columns
 
   template(x-if="columns_loaded")
-    .div.mt2
+    .dib.w-100.mt3
       .flex.flex-column.bg-black-05.br2
         template(x-for="p in column_info.presets")
           .w-100.pa2
-            label.fl.w-20(x-text="p")
-            select.fl.w-80(
+            label.fl.w-100.w-20-ns.f6(x-text="p")
+            select.fl.w-100.w-80-ns(
               data-type="column"
               x-bind:name="p"
             )
@@ -93,8 +89,7 @@ div(
                   x-bind:value="c"
                   x-text="c"
                 )
-      .flex.justify-between.mt2
-        .fl
+      .flex.mt3
         a.fl.link.button.primary(
           @click="upload()"
         ) Import

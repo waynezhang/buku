@@ -15,27 +15,26 @@ div(
     },
   }`
 )
-
-  .dib.mt3
+  .space1
 
   .black-60.lh-solid
     dl.dib.mr4.mr5-ns
-      dd.ml0.f5.ft.mb1 Year
+      dd.ml0.f5.ft.mb1.tracked-tight Year
       dd.ml0.f2
         a.b.black-60.link.hover-blue(
-          x-bind:href="'/page/book/year/' + home.current_year_record.year"
+          :href="'/page/book/year/' + home.current_year_record.year"
           x-text="home.current_year_record.year"
         )
     
     dl.dib.mr4.mr5-ns
-      dd.ml0.f5.ft.mb1 Finished
+      dd.ml0.f5.ft.mb1.tracked-tight Finished
       dd.ml0.f2.b(x-text="home.current_year_record.count")
 
     dl.dib
-      dd.ml0.f5.ft.mb1 Ongoing
+      dd.ml0.f5.ft.mb1.tracked-tight Ongoing
       dd.ml0.f2.b(x-text="home.counts.reading")
 
-  .dib.mb3
+  .space1
 
   .sub-page-header Reading
 
@@ -47,7 +46,7 @@ div(
     template(x-for="book in home.reading_books" x-data="{ show_tag: false }")
       include ../components/book_item
 
-  .mt4
+  .space2
 
   .sub-page-header History
 
@@ -56,7 +55,7 @@ div(
       .flex.items-center.lh-title
         .w-20
           a.f4.blue.link(
-            x-bind:href="'/page/book/year/' + record.year"
+            :href="'/page/book/year/' + record.year"
             x-text="record.year"
           )
           span.f6(x-text="'(' + record.count + ')'")
@@ -64,7 +63,7 @@ div(
             meter.w-100.dib(
               min="0"
               max="100"
-              x-bind:value="record.ratio")
+              :value="record.ratio")
 
   template(x-if="home.year_records.length == 0")
     .black-50.pb3.mv2

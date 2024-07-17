@@ -18,36 +18,36 @@ div(
 
   .flex.flex-wrap
     .w-100.w-20-ns
-      label(for="title") Title
+      label.black-60.f6(for="title") Title
     .w-100.w-80-ns
       input.w-100(type="text" name="title" placeholder="Title" x-model="form_data.title")
   .flex.flex-wrap.mt2
     .w-100.w-20-ns
-      label(for="author") Author
+      label.black-60.f6(for="author") Author
     .w-100.w-80-ns
       input.w-100(type="text" name="author" placeholder="Author" x-model="form_data.author" list="author_list")
   .flex.flex-wrap.mt2
     .w-100.w-20-ns
-      label(for="Series") Series
+      label.black-60.f6(for="Series") Series
     .w-100.w-80-ns
       input.w-100(type="text" name="series" placeholder="Series" x-model="form_data.series" list="series_list")
   .flex.flex-wrap.mt2
     .w-100.w-20-ns
-      label(for="ISBN") ISBN
+      label.black-60.f6(for="ISBN") ISBN
     .w-100.w-80-ns
       input.w-100(type="text" name="isbn" placeholder="ISBN" x-model="form_data.isbn")
   .flex.flex-wrap.mt2
     .w-100.w-20-ns
-      label(for="startedAt") Started
+      label.black-60.f6(for="startedAt") Started
     .w-100.w-80-ns
       input.w-100(type="text" name="startedAt" placeholder="YYYY-MM-DD" x-mask="9999/99/99" x-model="form_data.started_at")
   .flex.flex-wrap.mt2
     .w-100.w-20-ns
-      label(for="finishedAt") Finished
+      label.black-60.f6(for="finishedAt") Finished
     .w-100.w-80-ns
       input.w-100(type="text" name="finishedAt" placeholder="YYYY-MM-DD" x-mask="9999/99/99" x-model="form_data.finished_at")
   .flex.flex-wrap.mt2
-    label(for="comments") Comments
+    label.black-60.f6(for="comments") Comments
   .flex.flex-wrap.mt2
     textarea.w-100.h4.br2.ba.b--black-20(name="comments" x-model="form_data.comments")
 
@@ -56,7 +56,7 @@ div(
       @click="submit"
     ) Submit
 
-  .mt2
+  .space2
 
   details
     summary Search from Google
