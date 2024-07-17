@@ -29,13 +29,13 @@ div(
 )
   .page-header(x-text="book.title")
 
-  .flex.flex-wrap.mb2.bb.bw1.bw0-ns.b--black-025
+  .flex.flex-wrap.mb2.bb.bw1.bw0-ns.b--black-025.items-center
     .w-100.w-20-ns.black-60.f6 Author
     a.w-100.w-80-ns.link.blue(
       x-bind:href="'/page/author/' + book.author"
       x-text="book.author"
     )
-  .flex.flex-wrap.mb2.bb.bw1.bw0-ns.b--black-025
+  .flex.flex-wrap.mb2.bb.bw1.bw0-ns.b--black-025.items-center
     .w-100.w-20-ns.black-60.f6 Series
     template(x-if="book.series")
       a.w-100.w-80-ns.link.blue(
@@ -44,31 +44,31 @@ div(
       )
     template(x-if="!book.series")
       .w-100.w-80-ns &nbsp;
-  .flex.flex-wrap.mb2.bb.bw1.bw0-ns.b--black-025
+  .flex.flex-wrap.mb2.bb.bw1.bw0-ns.b--black-025.items-center
     .w-100.w-20-ns.black-60.f6 ISBN
     template(x-if="book.isbn")
       .w-100.w-80-ns(x-text="book.isbn")
     template(x-if="!book.isbn")
       .w-100.w-80-ns &nbsp;
-  .flex.flex-wrap.mb2.bb.bw1.bw0-ns.b--black-025
+  .flex.flex-wrap.mb2.bb.bw1.bw0-ns.b--black-025.items-center
     .w-100.w-20-ns.black-60.f6 Started
     template(x-if="book.started_at")
       .w-100.w-80-ns(x-text="formatDate(book.started_at)")
     template(x-if="!book.started_at")
       .w-100.w-80-ns &nbsp;
-  .flex.flex-wrap.mb2.bb.bw1.bw0-ns.b--black-025
+  .flex.flex-wrap.mb2.bb.bw1.bw0-ns.b--black-025.items-center
     .w-100.w-20-ns.black-60.f6 Finished
     template(x-if="book.finished_at")
       .w-100.w-80-ns(x-text="formatDate(book.finished_at)")
     template(x-if="!book.finished_at")
       .w-100.w-80-ns &nbsp;
-  .flex.flex-wrap.mb2.bb.bw1.bw0-ns.b--black-025
+  .flex.flex-wrap.mb2.bb.bw1.bw0-ns.b--black-025.items-center
     .w-100.w-20-ns.black-60.f6 Created
     template(x-if="book.created_at")
       .w-100.w-80-ns(x-text="formatDate(book.created_at)")
     template(x-if="!book.created_at")
       .w-100.w-80-ns &nbsp;
-  .flex.flex-wrap.mb2.bb.bw1.bw0-ns.b--black-025
+  .flex.flex-wrap.mb2.bb.bw1.bw0-ns.b--black-025.items-center
     .w-100.w-20-ns.black-60.f6 Comments
     template(x-if="book.comments")
       .w-100.w-80-ns(x-text="book.comments")
