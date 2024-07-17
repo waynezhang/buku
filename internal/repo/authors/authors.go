@@ -21,7 +21,7 @@ func GetAll(db *gorm.DB, name string, order string) []string {
 		q = q.Where("author LIKE ?", "%"+name+"%")
 	}
 	q.Group("author").
-		Order("author " + utils.SortOrder(order)).
+		Order("author COLLATE NOCASE " + utils.SortOrder(order)).
 		Find(&authors)
 
 	return authors

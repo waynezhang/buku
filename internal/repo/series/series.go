@@ -15,7 +15,7 @@ func GetAll(db *gorm.DB) []string {
 		Select("series").
 		Where("series IS NOT null AND series != ''").
 		Group("series").
-		Order("series").
+		Order("series COLLATE NOCASE").
 		Find(&series)
 	return series
 }

@@ -147,7 +147,7 @@ func GetByKeyword(db *gorm.DB, keyword string, sort string, order string, status
 	if len(status) != 0 {
 		q = q.Where("status = ?", status)
 	}
-	q.Order(sortCriteria(sort) + " " + utils.SortOrder(order)).
+	q.Order(sortCriteria(sort) + " COLLATE NOCASE " + utils.SortOrder(order)).
 		Find(&books)
 	return books
 }
@@ -173,7 +173,7 @@ func GetBySeries(db *gorm.DB, name string, sort string, order string) []models.B
 
 	db.Model(&models.Book{}).
 		Where("series = ?", name).
-		Order(sortCriteria(sort) + " " + utils.SortOrder(order)).
+		Order(sortCriteria(sort) + " COLLATE NOCASE " + utils.SortOrder(order)).
 		Find(&books)
 	return books
 }
