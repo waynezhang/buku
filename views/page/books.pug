@@ -20,7 +20,9 @@ div(
     }
   }`
 )
-  .page-header(x-text="'Books (' + books.length + ')'") Books
+  .page-header
+   span Books
+   span.label(x-text="books.length")
 
   input.w-100(
     x-model="name"

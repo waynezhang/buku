@@ -12,7 +12,9 @@ div(
     }
   }`
 )
-  .page-header(x-text="'Authors (' + authors.length + ')'")
+  .page-header
+    span Authors
+    span.label(x-text="authors.length")
 
   input.w-100(
     x-model="name"

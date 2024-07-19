@@ -10,7 +10,9 @@ div(
     }
   } `
 )
-  .page-header(x-text="'Backlog (' + books.length + ')'")
+  .page-header
+    span Backlog
+    span.label(x-text="books.length")
 
   template(x-if="books.length == 0")
    .info-banner

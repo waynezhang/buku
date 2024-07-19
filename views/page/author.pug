@@ -28,7 +28,9 @@ div(
     },
   }`
 )
-  .page-header(x-text="name + '(' + books.length + ')'")
+  .page-header
+    span(x-text="name")
+    span.label(x-text="books.length")
 
   template(x-for="book in books" x-data="{ show_tag: false }")
     include ../components/book_item

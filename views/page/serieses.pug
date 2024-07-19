@@ -10,7 +10,9 @@ div(
     }
   }`
 )
-  .page-header(x-text="'Series (' + series.length + ')'")
+  .page-header
+    span Series
+    span.label(x-text="series.length")
 
   template(x-for="s in series")
     .bb.bw1.bw0-ns.b--black-025.mb3.mb0-ns
