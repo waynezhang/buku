@@ -47,7 +47,7 @@ LISTEN_PORT=:9000
 
 - [x] Google Books Integration
 - [ ] Better navigation
-- [ ] Better URL management
+- [x] Better URL management
 - [ ] Paganation
 - [x] Export
 - ~[ ] Backup~ Use [Litestream](https://litestream.io)
