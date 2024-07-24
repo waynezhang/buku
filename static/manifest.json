@@ -1,0 +1,9 @@
+{
+  "name": "buku",
+  "short_name": "buku",
+  "description": "A reading tracking tool for minimalist",
+  "start_url": "/page/home",
+  "display": "standalone",
+  "background_color": "#ffffffE6",
+  "theme_color": "#357edd"
+}
