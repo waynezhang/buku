@@ -32,7 +32,7 @@ div(
     apan(x-text="name")
     span.label(x-text="books.length")
 
-  template(x-for="book in books" x-data="{ show_tag: false }")
+  template(x-for="book in books" x-data="{ show_tag: true }")
     include ../components/book_item
 
   .mt4.dib
