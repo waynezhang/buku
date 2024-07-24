@@ -15,7 +15,14 @@ html
   body.palatino.black-80.bg-white-90.ma0.pa0.f5-ns.f4(x-data="router()")
     header.tc.pv3
       a.f2.link.black-80.hover-blue.mv2.dib(href="/page/home") buku
-      nav.f4.f5-ns.lh-title.mv2
+      // ns
+      nav.f5.lh-title.mv2.dn.db-ns
+        a.mh1.pv1.ph2.blue.dib.link(href="/page/backlog") Backlog
+        a.mh1.pv1.ph2.blue.dib.link(href="/page/admin") Admin
+        a.mh1.pv1.ph2.blue.dib.link(href="/page/books") Search
+        a.mh1.pv1.ph2.blue.dib.link(href="/page/book/new") New
+      // small
+      nav.f4.lh-title.mv2.db.dn-ns.w-100.bg-near-white.pt2.pb4.fixed.bottom--1.bt.b--black-10
         a.mh1.pv1.ph2.blue.dib.link(href="/page/backlog") Backlog
         a.mh1.pv1.ph2.blue.dib.link(href="/page/admin") Admin
         a.mh1.pv1.ph2.blue.dib.link(href="/page/books") Search
@@ -58,10 +65,12 @@ html
       template(x-route="/page/admin/import")
         include ../page/admin_pages/import
 
-    footer.tc.mt5
+    footer.tc.mt5.dn.db-ns
       p 
         Copyright &copy {{this_year}}
         a.link.blue(href="https://github.com/waynezhang/buku" target="_blank") buku
+
+    .mt5.dn-ns.db
 
     script(type="text/javascript").
       function router() {
