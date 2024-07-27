@@ -3,7 +3,7 @@ html
   head
     title buku
     meta(charset="UTF-8")
-    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no, viewport-fit=cover")
     meta(name="theme-color" content="#ffffffE6")
     link(rel="manifest" href="/manifest.json")
     link(rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tachyons@4.12.0/css/tachyons.min.css")
@@ -15,18 +15,8 @@ html
   body.palatino.black-80.bg-white-90.ma0.pa0.f5-ns.f4(x-data="router()")
     header.tc.pv3
       a.f2.link.black-80.hover-blue.mv2.dib(href="/page/home") buku
-      // ns
-      nav.f5.lh-title.mv2.dn.db-ns
-        a.mh1.pv1.ph2.blue.dib.link(href="/page/backlog") Backlog
-        a.mh1.pv1.ph2.blue.dib.link(href="/page/admin") Admin
-        a.mh1.pv1.ph2.blue.dib.link(href="/page/books") Search
-        a.mh1.pv1.ph2.blue.dib.link(href="/page/book/new") New
-      // small
-      nav.f4.lh-title.mv2.db.dn-ns.w-100.bg-near-white.pt2.pb4.fixed.bottom--1.bt.b--black-10
-        a.mh1.pv1.ph2.blue.dib.link(href="/page/backlog") Backlog
-        a.mh1.pv1.ph2.blue.dib.link(href="/page/admin") Admin
-        a.mh1.pv1.ph2.blue.dib.link(href="/page/books") Search
-        a.mh1.pv1.ph2.blue.dib.link(href="/page/book/new") New
+      nav.nav-bar.f4.f5-ns.w-100
+        include ../components/nav_items.pug
 
     main.mv4.mw6.w-100.center.h-title.lh-copy.ph2
       // main pages
@@ -69,8 +59,6 @@ html
       p 
         Copyright &copy {{this_year}}
         a.link.blue(href="https://github.com/waynezhang/buku" target="_blank") buku
-
-    .mt5.dn-ns.db
 
     script(type="text/javascript").
       function router() {

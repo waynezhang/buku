@@ -114,3 +114,25 @@ meter {
   display: inline-block;
   margin-top: 1rem;
 }
+
+.nav-bar {
+  line-height: 3rem;
+}
+
+@media screen and (max-width: 30em) {
+  .nav-bar {
+    position: fixed;
+    bottom: 0;
+    background-color: #357edd;
+    padding-bottom: env(safe-area-inset-bottom, 0) !important;
+    border-top: 1px solid #2471d5;
+  }
+
+  .nav-bar a {
+    color: #eee !important;
+  }
+
+  main {
+    margin-bottom: calc(env(safe-area-inset-bottom, 0) + 3rem + 2rem) !important;
+  }
+}
