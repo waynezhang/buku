@@ -1,0 +1,35 @@
+<template x-component="home">
+    <div
+        class="grid gap-6"
+        x-show="loaded"
+        x-init="update()"
+        x-data="{
+            loaded: false,
+            home: {
+                counts: {},
+                reading_books: [],
+                year_records: [],
+                current_year_record: [],
+            },
+            async update() {
+                this.home = await $json('/api/home.json')
+                this.loaded = true
+            },
+        }"
+    >
+        <div>
+            <vui-stats
+                :year="home.current_year_record.year"
+                :finished="home.current_year_record.count"
+                :ongoing="home.counts.reading"
+            />
+        </div>
+        <div>
+            <vui-reading :books="home.reading_books" />
+        </div>
+        <div>
+            <vui-yearrecords :records="home.year_records" />
+        </div>
+    </div>
+    <slot></slot>
+</template>

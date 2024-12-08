@@ -1,0 +1,24 @@
+<template x-component="yearrecords">
+    <table class="">
+        <thead>
+            <th class="pr-4">Year</th>
+            <th>Count</th>
+        </thead>
+        <tbody>
+            <template x-for="record in $prop('records')">
+                <tr>
+                    <td class="pr-4">
+                        <a
+                            :href="'/page/book/year/' + record.year"
+                            x-text="record.year"
+                        ></a>
+                    </td>
+                    <td>
+                        <span x-text="record.count"></span>
+                    </td>
+                </tr>
+            </template>
+        </tbody>
+    </table>
+    <slot></slot>
+</template>

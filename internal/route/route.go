@@ -7,12 +7,13 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
-	"github.com/gofiber/template/pug/v2"
+	"github.com/gofiber/template/html/v2"
 	"gorm.io/gorm"
 )
 
 func Load(cfg *config.Config, db *gorm.DB) *fiber.App {
-	engine := pug.New("./views", ".pug")
+	// engine := pug.New("./views", ".pug")
+	engine := html.New("./views", ".html")
 	engine.Debug(cfg.Debug)
 	engine.Reload(cfg.Debug)
 	engine.AddFunc("now", func() string {
@@ -119,6 +120,9 @@ func Load(cfg *config.Config, db *gorm.DB) *fiber.App {
 	// fallback
 	f.Group("/page", func(c *fiber.Ctx) error {
 		return render(c, "page/index", fiber.Map{})
+	})
+	f.Static("/components", "./views/components", fiber.Static{
+		CacheDuration: -1,
 	})
 
 	return f

@@ -1,0 +1,97 @@
+<!doctype html>
+<html>
+    <head>
+        <title>buku</title>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, shrink-to-fit=no, viewport-fit=cover"
+        />
+        <meta name="theme-color" content="#ffffffE6" />
+        <link rel="manifest" href="/manifest.json" />
+        <link rel="stylesheet" href="/css/override.css" />
+        <script
+            defer="defer"
+            src="https://cdn.jsdelivr.net/npm/@alpinejs/mask@3.x.x/dist/cdn.min.js"
+        ></script>
+        <script
+            defer="defer"
+            src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"
+        ></script>
+        <script src="https://cdn.jsdelivr.net/npm/pinecone-router@4.4.0/dist/router.min.js"></script>
+        <script src="https://unpkg.com/@vimesh/style"></script>
+        <script src="https://unpkg.com/@vimesh/ui"></script>
+        <script>
+            $vui.config.importMap = {
+                "*": "/components/${component}.html",
+                core: "/components/core/${component}.html",
+            };
+            $vui.config.autoImport = true;
+            $vs.addMacroCss({
+                a: "text-blue-600",
+                h1: "text-4xl",
+                h2: "text-xl font-semibold",
+                h3: "font-semibold",
+            });
+        </script>
+    </head>
+    <body x-data="router()">
+        <div class="flex justify-center max-w-lg flex-col mx-auto my-10">
+            <header>
+                <h1 class="font-medium text-4xl text-center">
+                    <a class="text-slate-700" href="/page/home">buku</a>
+                </h1>
+                <vui-navbar />
+            </header>
+
+            <!-- main pages -->
+            <template x-route="/page/home">
+                <vui-home />
+            </template>
+            <template x-route="/page/backlog">
+                <vui-backlog />
+            </template>
+
+            <vui-footer />
+
+            <!-- <template x-route="/page/home"
+              include ../page/home.html
+            ></template>
+            <template x-route="/page/backlog"
+              include ../page/backlog
+            ></template>
+            <template x-route="/page/admin"
+                include ../page/admin
+                ></template>  -->
+        </div>
+        <script type="text/javascript">
+            function router() {
+                return {};
+            }
+            function formatDate(date) {
+                if (date == null) {
+                    return "";
+                }
+                date = new Date(date);
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, "0");
+                const day = String(date.getDate()).padStart(2, "0");
+                return `${year}-${month}-${day}`;
+            }
+            document.addEventListener("alpine:init", () => {
+                Alpine.magic("json", () => async (url, method, data) => {
+                    const resp = await fetch(url, {
+                        method: method || "GET",
+                        headers: { "Content-Type": "application/json" },
+                        body: data ? JSON.stringify(data) : null,
+                    });
+                    if (!resp.ok) {
+                        const json = await resp.json();
+                        throw Error(json.message);
+                    }
+                    return await resp.json();
+                });
+            });
+        </script>
+    </body>
+</html>

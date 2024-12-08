@@ -1,0 +1,20 @@
+<template x-component="backlog">
+    <div
+        x-show="loaded"
+        x-init="update()"
+        x-data="{
+          loaded: false,
+          books: [],
+          async update() {
+            this.books = await $json('/api/books/to-read.json')
+            this.loaded = true
+          }
+        }"
+    >
+        <core-pagetitle>
+            <span x-text="'Backlog (' + books.length + ')'"></span>
+        </core-pagetitle>
+        <vui-booklist :books="books" />
+    </div>
+    <slot></slot>
+</template>
