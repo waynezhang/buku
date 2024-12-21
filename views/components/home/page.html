@@ -1,0 +1,30 @@
+<template x-component:home="page">
+    <div class="grid gap-6">
+        <div>
+            <home-stats
+                :year="$api.$of('').home.current_year_record.year"
+                :finished="$api.$of('').home.current_year_record.count"
+                :ongoing="$api.$of('').home.counts.reading"
+            />
+        </div>
+        <div>
+            <home-reading :books="$api.$of('').home.reading_books" />
+        </div>
+        <div>
+            <home-yearrecords :records="$api.$of('').home.year_records" />
+        </div>
+        <script>
+            return {
+                home: {
+                    counts: {},
+                    reading_books: [],
+                    year_records: [],
+                    current_year_record: {},
+                },
+                async onMounted() {
+                    this.home = await $json("/api/home.json");
+                },
+            };
+        </script>
+    </div>
+</template>

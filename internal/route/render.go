@@ -13,7 +13,7 @@ func renderJSONOKMessage(c *fiber.Ctx) error {
 }
 
 func renderJSONError(c *fiber.Ctx, message string) error {
-	return c.Status(fiber.ErrBadGateway.Code).JSON(genericResponse{message})
+	return c.Status(fiber.ErrBadRequest.Code).JSON(genericResponse{message})
 }
 
 func render(c *fiber.Ctx, tpl string, data interface{}) error {

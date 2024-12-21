@@ -9,7 +9,6 @@
         />
         <meta name="theme-color" content="#ffffffE6" />
         <link rel="manifest" href="/manifest.json" />
-        <link rel="stylesheet" href="/css/override.css" />
         <script
             defer="defer"
             src="https://cdn.jsdelivr.net/npm/@alpinejs/mask@3.x.x/dist/cdn.min.js"
@@ -23,46 +22,76 @@
         <script src="https://unpkg.com/@vimesh/ui"></script>
         <script>
             $vui.config.importMap = {
-                "*": "/components/${component}.html",
-                core: "/components/core/${component}.html",
+                common: "/components/common/${component}.html",
+                home: "/components/home/${component}.html",
+                backlog: "/components/backlog/${component}.html",
+                admin: "/components/admin/${component}.html",
+                books: "/components/books/${component}.html",
+                series: "/components/series/${component}.html",
+                authors: "/components/authors/${component}.html",
             };
             $vui.config.autoImport = true;
             $vs.addMacroCss({
                 a: "text-blue-600",
                 h1: "text-4xl",
-                h2: "text-xl font-semibold",
-                h3: "font-semibold",
+                h2: "text-xl font-medium",
+                h3: "font-normal",
+                body: "font-system font-light",
             });
+            $vs.config.fonts = {
+                system: "system-ui",
+            };
         </script>
     </head>
     <body x-data="router()">
-        <div class="flex justify-center max-w-lg flex-col mx-auto my-10">
-            <header>
-                <h1 class="font-medium text-4xl text-center">
-                    <a class="text-slate-700" href="/page/home">buku</a>
-                </h1>
-                <vui-navbar />
-            </header>
+        <div class="max-w-lg mx-auto my-10 px-4 text-lg">
+            <common-header :path="$router.path"></common-header>
 
             <!-- main pages -->
             <template x-route="/page/home">
-                <vui-home />
+                <home-page />
             </template>
             <template x-route="/page/backlog">
-                <vui-backlog />
+                <backlog-page />
+            </template>
+            <template x-route="/page/admin">
+                <admin-page />
+            </template>
+            <template x-route="/page/admin/import">
+                <admin-import />
             </template>
 
-            <vui-footer />
+            <template x-route="/page/books">
+                <books-index />
+            </template>
+            <template x-route="/page/book/year/:year">
+                <books-yearview :year="$router.params.year" />
+            </template>
+            <template x-route="/page/book/new">
+                <books-edit />
+            </template>
+            <template x-route="/page/book/:id">
+                <books-view :book-id="$router.params.id" />
+            </template>
+            <template x-route="/page/book/:id/edit">
+                <books-edit :book-id="$router.params.id" />
+            </template>
 
-            <!-- <template x-route="/page/home"
-              include ../page/home.html
-            ></template>
-            <template x-route="/page/backlog"
-              include ../page/backlog
-            ></template>
-            <template x-route="/page/admin"
-                include ../page/admin
-                ></template>  -->
+            <template x-route="/page/serieses">
+                <series-index />
+            </template>
+            <template x-route="/page/series/:name">
+                <series-page :series="$router.params.name" />
+            </template>
+
+            <template x-route="/page/authors">
+                <authors-index />
+            </template>
+            <template x-route="/page/author/:name">
+                <authors-page :author="$router.params.name" />
+            </template>
+
+            <common-footer></common-footer>
         </div>
         <script type="text/javascript">
             function router() {
@@ -78,18 +107,21 @@
                 const day = String(date.getDate()).padStart(2, "0");
                 return `${year}-${month}-${day}`;
             }
+            async function $json(url, method, data) {
+                const resp = await fetch(url, {
+                    method: method || "GET",
+                    headers: { "Content-Type": "application/json" },
+                    body: data ? JSON.stringify(data) : null,
+                });
+                if (!resp.ok) {
+                    const json = await resp.json();
+                    throw Error(json.message);
+                }
+                return await resp.json();
+            }
             document.addEventListener("alpine:init", () => {
                 Alpine.magic("json", () => async (url, method, data) => {
-                    const resp = await fetch(url, {
-                        method: method || "GET",
-                        headers: { "Content-Type": "application/json" },
-                        body: data ? JSON.stringify(data) : null,
-                    });
-                    if (!resp.ok) {
-                        const json = await resp.json();
-                        throw Error(json.message);
-                    }
-                    return await resp.json();
+                    return await $json(url, method, data);
                 });
             });
         </script>

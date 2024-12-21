@@ -1,0 +1,38 @@
+<template x-component:series="page">
+  <div>
+    <common-pagetitle><span x-text="$api.$of('').series"></span></common-pagetitle>
+    <div class="my-4">
+      <common-booklist :books="$api.$of('').books" show-tag="true"></common-booklist>
+    </div>
+    <div class="mt-8">
+      <common-button @click="$api.$of().onClickRename()">Rename</common-button>
+    </div>
+    <slot></slot>
+  </div>
+  <script>
+    return {
+      series: "",
+      books: [],
+      async onMounted() {
+        this.series = this.$api.$prop("series");
+        this.books = await $json(
+          "/api/books/series/" + this.series + ".json",
+        );
+      },
+      async onClickRename() {
+        new_name = (
+          prompt("Rename series name", this.series) || ""
+        ).trim();
+        if (!new_name || new_name == this.series) {
+          return;
+        }
+
+        await $json("/api/series/" + this.series + ".json", "POST", {
+          name: new_name,
+        });
+        this.$router.navigate("/page/series/" + new_name);
+        this.series = new_name;
+      },
+    };
+  </script>
+</template>

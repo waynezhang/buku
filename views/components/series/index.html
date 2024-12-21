@@ -1,0 +1,23 @@
+<template x-component:series="index">
+    <div>
+        <common-pagetitle>Series</common-pagetitle>
+        <div class="my-4">
+            <ul>
+                <template x-for="s in $api.series">
+                    <li>
+                        <a :href="'/page/series/' +s" x-text="s"></a>
+                    </li>
+                </template>
+            </ul>
+        </div>
+        <slot></slot>
+    </div>
+    <script>
+        return {
+            series: [],
+            async onMounted() {
+                this.series = await $json("/api/series.json");
+            },
+        };
+    </script>
+</template>

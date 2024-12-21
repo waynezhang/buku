@@ -1,0 +1,19 @@
+<template x-component:common="message">
+    <template x-if="$prop('text').length">
+        <div class="p-4 my-4 text-base" :class="$api.classMap[$prop('type')]">
+            <span x-text="$prop('text')">
+                <slot></slot>
+            </span>
+        </div>
+    </template>
+    <script>
+        return {
+            hasContent: true,
+            classMap: {
+                info: "text-blue-700 bg-blue-50",
+                error: "text-red-700 bg-red-50",
+            },
+            async onMounted() {},
+        };
+    </script>
+</template>

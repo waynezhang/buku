@@ -1,0 +1,98 @@
+<template x-component:books="view">
+    <div>
+        <common-pagetitle
+            ><span x-text="$api.$of('').book.title"></span
+        ></common-pagetitle>
+        <div class="grid grid-cols-8 items-center">
+            <div :class="$api.label_class">Author</div>
+            <div :class="$api.value_class" x-text="$api.book.author"></div>
+            <div :class="$api.label_class">Series</div>
+            <div :class="$api.value_class" x-text="$api.book.series"></div>
+            <div :class="$api.label_class">ISBN</div>
+            <div :class="$api.value_class" x-text="$api.book.isbn"></div>
+            <div :class="$api.label_class">Started</div>
+            <div
+                :class="$api.value_class"
+                x-text="formatDate($api.book.started_at)"
+            ></div>
+            <div :class="$api.label_class">Finished</div>
+            <div
+                :class="$api.value_class"
+                x-text="formatDate($api.book.finished_at)"
+            ></div>
+            <div :class="$api.label_class">Created</div>
+            <div
+                :class="$api.value_class"
+                x-text="formatDate($api.book.created_at)"
+            ></div>
+            <div :class="$api.label_class">Comments</div>
+            <div :class="$api.value_class" x-text="$api.book.comments"></div>
+        </div>
+        <div class="mt-8 flex gap-4">
+            <template x-if="$api.book.status != 'reading'">
+                <common-button
+                    type="primary"
+                    @click="$api.$of().changeStatus('reading')"
+                    >Start</common-button
+                >
+            </template>
+            <template x-if="$api.book.status == 'reading'">
+                <common-button @click="$api.$of().changeStatus('to-read')"
+                    >Stop</common-button
+                >
+            </template>
+            <template x-if="$api.book.status == 'reading'">
+                <common-button
+                    type="primary"
+                    @click="$api.$of().changeStatus('read')"
+                    >Finish</common-button
+                >
+            </template>
+            <common-button
+                type="destructive"
+                @click="$api.$of().confirmDelete()"
+                >Delete</common-button
+            >
+            <common-button type="link" @click="$api.$of().navigateToEditPage()"
+                >Edit</common-button
+            >
+        </div>
+        <slot></slot>
+    </div>
+    <script>
+        return {
+            book_id: "",
+            label_class: "text-sm col-span-2 text-gray-500 my-2",
+            value_class: "col-span-6 whitespace-pre-wrap",
+            book: {},
+            async onMounted() {
+                this.book_id = this.$prop("book-id");
+                await this.doUpdate();
+            },
+            async doUpdate() {
+                this.book = await $json("/api/book/" + this.book_id + ".json");
+            },
+            async changeStatus(status) {
+                await $json(
+                    "/api/book/" + this.book_id + "/status.json",
+                    "POST",
+                    {
+                        status: status,
+                    },
+                );
+                await this.doUpdate();
+            },
+            async confirmDelete() {
+                const confirmed = confirm("Are your sure to delete this book?");
+                if (!confirmed) {
+                    return;
+                }
+                await $json("/api/book/" + this.book_id + ".json", "DELETE");
+                this.$router.navigate("/page/home");
+            },
+            async navigateToEditPage() {
+                this.$router.navigate("/page/book/" + this.book_id + "/edit");
+            },
+        };
+    </script>
+</template>

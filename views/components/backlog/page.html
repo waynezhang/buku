@@ -1,0 +1,16 @@
+<template x-component:backlog="page">
+    <div>
+        <common-pagetitle>
+            <span x-text="'Backlog (' + $api.$of('').books.length + ')'"></span>
+        </common-pagetitle>
+        <common-booklist :books="$api.$of('').books" />
+    </div>
+    <script>
+        return {
+            books: [],
+            async onMounted() {
+                this.books = await $json("/api/books/to-read.json");
+            },
+        };
+    </script>
+</template>

@@ -1,0 +1,170 @@
+<template x-component:admin="import">
+    <div>
+        <common-pagetitle>Import</common-pagetitle>
+        <div>
+            <common-message type="info" :text="$api.$of('').info_message">
+            </common-message>
+            <common-message type="error" :text="$api.$of('').error_message">
+            </common-message>
+            <div class="grid grid-cols-8 gap-y-1 gap-x-8 items-center">
+                <div class="col-span-3 py-2">CSV File</div>
+                <div class="col-span-5">
+                    <input
+                        class="text-sm text-gray-700 file:py-2 file:px-2.5 file:border-0 file:bg-slate-100 file:text-sm file:text-gray-700"
+                        type="file"
+                        accept=".csv"
+                        x-ref="file"
+                        @change="$api.csv_file = $refs.file.files[0]"
+                    />
+                </div>
+                <div class="col-span-3 py-2">Delimiter</div>
+                <div class="col-span-5">
+                    <common-dropdown
+                        x-model="$api.$of('').delimiter"
+                        :options="[
+                            [',', ','],
+                            [';', ';'],
+                        ]"
+                    >
+                    </common-dropdown>
+                </div>
+            </div>
+            <div class="mt-4">
+                <common-button @click="$api.$of('').loadCSVFile()"
+                    >Read Columns</common-button
+                >
+            </div>
+            <template x-if="$api.column_presets.length">
+                <div class="my-8">
+                    <template x-for="p in $api.column_presets">
+                        <div
+                            class="grid grid-cols-8 gap-x-8 my-1 items-center text-sm"
+                        >
+                            <div class="col-span-2">
+                                <label x-text="p" />
+                            </div>
+                            <div class="col-span-5">
+                                <common-dropdown
+                                    class="col-span-2"
+                                    select-data-type="column"
+                                    :select-name="p"
+                                    :options="$api.$of('').column_options"
+                                />
+                            </div>
+                        </div>
+                    </template>
+                    <div class="mt-4">
+                        <common-button
+                            type="primary"
+                            @click="$api.$of('').doUpload()"
+                            >Import</common-button
+                        >
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+    <script>
+        return {
+            error_message: "",
+            delimiter: ",",
+            csv_file: null,
+            column_presets: [],
+            column_options: [],
+            info_message: "",
+            async onMounted() {
+                // this.loadTestData();
+            },
+            async loadCSVFile() {
+                this.resetMessages();
+
+                if (!this.csv_file) {
+                    this.error_message = "Please upload a CSV file.";
+                    return;
+                }
+
+                const fd = new FormData();
+                fd.append("file", this.csv_file);
+                fd.append("delimiter", this.delimiter);
+
+                try {
+                    const resp = await fetch("/api/import/read_columns", {
+                        method: "POST",
+                        body: fd,
+                    });
+                    const json = await resp.json();
+
+                    this.loadColumnPresets(json.presets);
+                    this.loadColumnOptions(json.columns);
+                } catch (e) {
+                    this.error_message = e;
+                }
+            },
+            async doUpload() {
+                this.resetMessages();
+
+                const fd = new FormData();
+                document.querySelectorAll("[data-type=column]").forEach((s) => {
+                    fd.append(s.name, s.value);
+                });
+                fd.append("file", this.csv_file);
+                fd.append("delimiter", this.delimiter);
+
+                try {
+                    const resp = await fetch("/api/import", {
+                        method: "POST",
+                        body: fd,
+                    });
+                    const json = await resp.json();
+                    const message =
+                        "Imported " +
+                        json.succeeded +
+                        " records, " +
+                        json.failed +
+                        " failed.";
+                    if (json.failed > 0) {
+                        this.error_message = message;
+                    } else {
+                        this.info_message = message;
+                    }
+                } catch (e) {
+                    this.error_message = e;
+                }
+            },
+            resetMessages() {
+                this.info_message = "";
+                this.error_message = "";
+            },
+
+            loadColumnPresets(presets) {
+                this.column_presets = presets;
+            },
+            loadColumnOptions(options) {
+                this.column_options = $vui._.map(options, (c) => {
+                    return [c, c];
+                });
+            },
+            loadTestData() {
+                this.loadColumnPresets([
+                    "Title",
+                    "Author",
+                    "Series",
+                    "ISBN",
+                    "Comments",
+                    "Started",
+                    "Finished",
+                ]);
+                this.loadColumnOptions([
+                    "-",
+                    "Title",
+                    "Author",
+                    "Series",
+                    "ISBN",
+                    "Comments",
+                    "Started",
+                    "Finished",
+                ]);
+            },
+        };
+    </script>
+</template>

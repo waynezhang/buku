@@ -1,0 +1,7 @@
+<template x-component:home="reading">
+    <div>
+        <common-sectiontitle>Reading</common-sectiontitle>
+        <common-booklist :books="$api.$of().$prop('books')" />
+        <slot></slot>
+    </div>
+</template>

@@ -1,0 +1,44 @@
+<template x-component:authors="page">
+  <div>
+    <common-pagetitle><span x-text="$api.$of('').author"></span></common-pagetitle>
+    <div class="my-4">
+      <common-booklist :books="$api.$of('').books" show-tag="true"></common-booklist>
+    </div>
+    <div>
+      <common-button @click="$api.$of().onClickRename()">Rename</common-button>
+    </div>
+    <slot></slot>
+  </div>
+  <script>
+    return {
+      author: "",
+      books: [],
+      async onMounted() {
+        this.author = this.$api.$prop("author");
+        await this.doUpdate();
+      },
+      async onClickRename() {
+        new_name = (
+          prompt("Rename series name", this.author) || ""
+        ).trim();
+        if (!new_name || new_name == this.author) {
+          return;
+        }
+
+        await $json("/api/author/" + this.author + ".json", "POST", {
+          name: new_name,
+        });
+
+        this.$router.navigate("/page/author/" + new_name);
+        this.author = new_name;
+
+        await this.doUpdate();
+      },
+      async doUpdate() {
+        this.books = await $json(
+          "/api/books/author/" + this.author + ".json",
+        );
+      },
+    };
+  </script>
+</template>

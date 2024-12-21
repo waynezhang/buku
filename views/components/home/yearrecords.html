@@ -1,0 +1,26 @@
+<template x-component:home="yearrecords">
+    <div>
+        <common-sectiontitle>History</common-sectiontitle>
+        <template x-for="record in $prop('records')">
+            <div class="grid grid-cols-8 items-center">
+                <div class="col-span-1">
+                    <a
+                        :href="'/page/book/year/' + record.year"
+                        x-text="record.year"
+                    ></a>
+                </div>
+                <div class="col-span-7">
+                    <div class="w-full bg-gray-50">
+                        <div
+                            class="bg-gray-200 text-xs text-gray-400 text-center p-0.5"
+                            :style="'width: ' + record.ratio + '%'"
+                        >
+                            <span x-text="record.count"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+        <slot></slot>
+    </div>
+</template>

@@ -1,0 +1,38 @@
+<template x-component:common="header">
+    <div>
+        <h1 class="font-medium text-4xl">
+            <a class="text-gray-700" href="/page/home">buku</a>
+        </h1>
+        <nav
+            class="flex justify-left mt-4 mb-10"
+            x-shtml="$api && $api.navHTML || ''"
+        />
+    </div>
+    <script>
+        return {
+            navHTML: "",
+            onMounted() {
+                const links = [
+                    ["/page/backlog", "Backlog"],
+                    ["/page/admin", "Admin"],
+                    ["/page/books", "Search"],
+                    ["/page/book/new", "New"],
+                ];
+                const eles = $vui._.map(links, (link) => {
+                    const e = document.createElement("a");
+                    e.href = link[0];
+                    e.className = "mr-8";
+                    e.setAttribute(
+                        ":class",
+                        "$prop('path') == '" +
+                            link[0] +
+                            "' ? 'border-b-2' : ''",
+                    );
+                    e.textContent = link[1];
+                    return e.outerHTML;
+                });
+                this.navHTML = eles.join("");
+            },
+        };
+    </script>
+</template>

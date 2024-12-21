@@ -121,9 +121,7 @@ func Load(cfg *config.Config, db *gorm.DB) *fiber.App {
 	f.Group("/page", func(c *fiber.Ctx) error {
 		return render(c, "page/index", fiber.Map{})
 	})
-	f.Static("/components", "./views/components", fiber.Static{
-		CacheDuration: -1,
-	})
+	f.Static("/components", "./views/components")
 
 	return f
 }
