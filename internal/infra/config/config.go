@@ -16,11 +16,19 @@ type Config struct {
 func Load() *Config {
 	_ = godotenv.Load(".env")
 	config := Config{
-		DatabasePath: os.Getenv("DB_PATH"),
-		Debug:        os.Getenv("DEBUG") == "true",
-		ListenPort:   os.Getenv("LISTEN_PORT"),
+		DatabasePath: getEnv("DB_PATH", "./db.sqlite"),
+		Debug:        getEnv("DEBUG", "false") == "true",
+		ListenPort:   getEnv("LISTEN_PORT", ":9000"),
 	}
-	log.Debug("Config %v", config)
+	log.Debug("Config ", config)
 
 	return &config
+}
+
+func getEnv(key string, fallback string) string {
+	value, exists := os.LookupEnv(key)
+	if !exists {
+		value = fallback
+	}
+	return value
 }
