@@ -21,6 +21,9 @@
                 </div>
             </div>
         </template>
+        <template x-if="$api.$prop('records').length == 0">
+            <common-message type="info">No books found.</common-message>
+        </template>
         <slot></slot>
     </div>
 </template>

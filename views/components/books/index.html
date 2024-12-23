@@ -41,32 +41,38 @@
                 ></common-dropdown>
             </div>
         </div>
-        <common-booklist :books="$api.$of('').books" :show-tag="true" />
+        <common-booklist
+            :books="$api.$of('').books"
+            :show-tag="true"
+        ></common-booklist>
+        <template x-if="$api.books.length == 0">
+            <common-message type="info"> No books found. </common-message>
+        </template>
         <slot></slot>
-        <script>
-            return {
-                name: "",
-                order: "asc",
-                sort: "title",
-                status: "",
-                books: [],
-                async onMounted() {
-                    await this.doSearch();
-                },
-                async doSearch() {
-                    this.books = await $json(
-                        "/api/books.json?" +
-                            "name=" +
-                            this.name +
-                            "&order=" +
-                            this.order +
-                            "&sort=" +
-                            this.sort +
-                            "&status=" +
-                            this.status,
-                    );
-                },
-            };
-        </script>
     </div>
+    <script>
+        return {
+            name: "",
+            order: "asc",
+            sort: "title",
+            status: "",
+            books: [],
+            async onMounted() {
+                await this.doSearch();
+            },
+            async doSearch() {
+                this.books = await $json(
+                    "/api/books.json?" +
+                        "name=" +
+                        this.name +
+                        "&order=" +
+                        this.order +
+                        "&sort=" +
+                        this.sort +
+                        "&status=" +
+                        this.status,
+                );
+            },
+        };
+    </script>
 </template>

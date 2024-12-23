@@ -19,6 +19,9 @@
                     </template>
                 </ul>
             </div>
+            <template x-if="$api.authors.length == 0">
+                <common-message type="info">No authors found.</common-message>
+            </template>
         </div>
         <slot></slot>
     </div>

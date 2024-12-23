@@ -9,6 +9,9 @@
                     </li>
                 </template>
             </ul>
+            <template x-if="$api.series.length == 0">
+                <common-message type="info">No series found.</common-message>
+            </template>
         </div>
         <slot></slot>
     </div>

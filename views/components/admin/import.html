@@ -1,10 +1,12 @@
-<template x-component:admin="import">
+<template x-component:admin="import" x-data="{ a: 1}">
     <div>
         <common-pagetitle>Import</common-pagetitle>
         <div>
-            <common-message type="info" :text="$api.$of('').info_message">
+            <common-message type="info">
+                <span x-text="$api.$of('').info_message"></span>
             </common-message>
-            <common-message type="error" :text="$api.$of('').error_message">
+            <common-message type="error">
+                <span x-text="$api.$of('').error_message"></span>
             </common-message>
             <div class="grid grid-cols-8 gap-y-1 gap-x-8 items-center">
                 <div class="col-span-3 py-2">CSV File</div>
@@ -66,12 +68,12 @@
     </div>
     <script>
         return {
+            info_message: "",
             error_message: "",
             delimiter: ",",
             csv_file: null,
             column_presets: [],
             column_options: [],
-            info_message: "",
             async onMounted() {
                 // this.loadTestData();
             },

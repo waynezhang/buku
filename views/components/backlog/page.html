@@ -3,7 +3,10 @@
         <common-pagetitle>
             <span x-text="'Backlog (' + $api.$of('').books.length + ')'"></span>
         </common-pagetitle>
-        <common-booklist :books="$api.$of('').books" />
+        <common-booklist :books="$api.$of('').books"></common-booklist>
+        <template x-if="$api.books.length == 0">
+            <common-message type="info"> No books found. </common-message>
+        </template>
     </div>
     <script>
         return {

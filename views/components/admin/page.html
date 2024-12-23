@@ -29,7 +29,8 @@
                         Delete All
                     </common-button>
                 </div>
-                <common-message type="info" :text="$api.$of('').info_message">
+                <common-message type="info">
+                    <span x-text="$api.$of('').info_message"></span>
                 </common-message>
             </div>
         </div>

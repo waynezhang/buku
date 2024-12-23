@@ -4,10 +4,9 @@
             ><span x-text="$api.$of('').data.title"></span
         ></common-pagetitle>
         <div class="mt-8">
-            <common-message
-                type="error"
-                :text="$api.$of('').data.error_message"
-            ></common-message>
+            <common-message type="error">
+                <span x-text="$api.$of('').data.error_message"></span>
+            </common-message>
             <div>
                 <div :class="$api.class.label">Title</div>
                 <div class="flex items-center" :class="$api.class.value">
