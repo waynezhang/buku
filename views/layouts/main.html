@@ -11,15 +11,15 @@
         <link rel="manifest" href="/manifest.json" />
         <script
             defer="defer"
-            src="https://cdn.jsdelivr.net/npm/@alpinejs/mask@3.x.x/dist/cdn.min.js"
+            src="https://cdn.jsdelivr.net/npm/@alpinejs/mask@3/dist/cdn.min.js"
         ></script>
         <script
             defer="defer"
-            src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"
+            src="https://cdn.jsdelivr.net/npm/alpinejs@3/dist/cdn.min.js"
         ></script>
-        <script src="https://cdn.jsdelivr.net/npm/pinecone-router@4.4.0/dist/router.min.js"></script>
-        <script src="https://unpkg.com/@vimesh/style"></script>
-        <script src="https://unpkg.com/@vimesh/ui"></script>
+        <script src="https://cdn.jsdelivr.net/npm/pinecone-router@4/dist/router.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@vimesh/style@1/dist/vs.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@vimesh/ui@0/dist/vui.min.js"></script>
         <script>
             $vui.config.importMap = {
                 common: "/components/common/${component}.html",
@@ -43,6 +43,7 @@
             };
         </script>
     </head>
+
     <body x-data="router()">
         <div class="max-w-lg mx-auto my-10 px-4 text-lg">
             <common-header :path="$router.path"></common-header>

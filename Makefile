@@ -1,5 +1,6 @@
 OUTPUT_PATH=bin
 BINARY=buku
+LDFLAGS=-ldflags "-s -w"
 
 all: build
 
