@@ -1,6 +1,11 @@
 <template x-component:books="index">
     <div>
-        <common-pagetitle>Books</common-pagetitle>
+        <common-pagetitle>
+            Books
+            <common-counttag
+                :count="$api.$of().$of().books.length"
+            ></common-counttag>
+        </common-pagetitle>
         <div class="my-4">
             <input
                 class="block w-full px-2 py-1 text-gray-700 border border-slate-400 rounded-none"
@@ -58,6 +63,7 @@
             status: "",
             books: [],
             async onMounted() {
+                this.status = this.$api.$prop("status") || "";
                 await this.doSearch();
             },
             async doSearch() {

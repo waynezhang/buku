@@ -17,7 +17,7 @@
                     <template x-if="$prop('show-tag')">
                         <span
                             class="ml-2 text-base"
-                            :class="$api.tagClassMap[book.status]"
+                            :class="$api.tag_class_map[book.status]"
                             x-text="'#' + book.status"
                         ></span>
                     </template>
@@ -27,7 +27,7 @@
         <slot></slot>
         <script>
             return {
-                tagClassMap: {
+                tag_class_map: {
                     "to-read": "text-orange-700",
                     reading: "text-green-700",
                     read: "text-gray-300",

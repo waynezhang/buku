@@ -20,11 +20,6 @@
                 :class="$api.value_class"
                 x-text="formatDate($api.book.finished_at)"
             ></div>
-            <div :class="$api.label_class">Created</div>
-            <div
-                :class="$api.value_class"
-                x-text="formatDate($api.book.created_at)"
-            ></div>
             <div :class="$api.label_class">Comments</div>
             <div :class="$api.value_class" x-text="$api.book.comments"></div>
         </div>
@@ -37,15 +32,15 @@
                 >
             </template>
             <template x-if="$api.book.status == 'reading'">
-                <common-button @click="$api.$of().changeStatus('to-read')"
-                    >Stop</common-button
-                >
-            </template>
-            <template x-if="$api.book.status == 'reading'">
                 <common-button
                     type="primary"
                     @click="$api.$of().changeStatus('read')"
                     >Finish</common-button
+                >
+            </template>
+            <template x-if="$api.book.status == 'reading'">
+                <common-button @click="$api.$of().changeStatus('to-read')"
+                    >Stop</common-button
                 >
             </template>
             <common-button
@@ -57,6 +52,16 @@
                 >Edit</common-button
             >
         </div>
+        <div class="mt-6">
+            <common-metatag
+                key="status"
+                :value="$api.$of().book_status"
+            ></common-metatag>
+            <common-metatag
+                key="created at"
+                :value="formatDate($api.$of().book.created_at)"
+            ></common-metatag>
+        </div>
         <slot></slot>
     </div>
     <script>
@@ -64,6 +69,7 @@
             book_id: "",
             label_class: "text-sm col-span-2 text-gray-500 my-2",
             value_class: "col-span-6 whitespace-pre-wrap",
+            book_status: "",
             book: {},
             async onMounted() {
                 this.book_id = this.$prop("book-id");
@@ -71,6 +77,13 @@
             },
             async doUpdate() {
                 this.book = await $json("/api/book/" + this.book_id + ".json");
+
+                const smap = {
+                    "to-read": "Backlog",
+                    reading: "Reading",
+                    read: "Finished",
+                };
+                this.book_status = smap[this.book.status];
             },
             async changeStatus(status) {
                 await $json(

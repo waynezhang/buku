@@ -1,11 +1,11 @@
 <template x-component:common="message">
-    <div class="p-4 my-4 text-base" :class="$api.classMap[$prop('type')]">
+    <div class="p-4 my-4 text-base" :class="$api.class_map[$prop('type')]">
         <slot></slot>
     </div>
     <script>
         return {
             observer: null,
-            classMap: {
+            class_map: {
                 info: "text-blue-700 bg-blue-50",
                 error: "text-red-700 bg-red-50",
             },

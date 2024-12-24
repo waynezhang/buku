@@ -1,14 +1,14 @@
 <template x-component:common="button" class="inline">
     <a
         class="px-6 py-2 cursor-pointer text-sm"
-        :class="$api.classMap[$prop('type')]"
+        :class="$api.class_map[$prop('type')]"
         target="_"
     >
         <slot></slot>
     </a>
     <script>
         return {
-            classMap: {
+            class_map: {
                 undefined:
                     "transition border text-slate-700 border-slate-500 hover:bg-slate-100 ",
                 primary:

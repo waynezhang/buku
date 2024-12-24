@@ -24,7 +24,6 @@
             $vui.config.importMap = {
                 common: "/components/common/${component}.html",
                 home: "/components/home/${component}.html",
-                backlog: "/components/backlog/${component}.html",
                 admin: "/components/admin/${component}.html",
                 books: "/components/books/${component}.html",
                 series: "/components/series/${component}.html",
@@ -53,7 +52,7 @@
                 <home-page />
             </template>
             <template x-route="/page/backlog">
-                <backlog-page />
+                <books-index status="to-read" />
             </template>
             <template x-route="/page/admin">
                 <admin-page />

@@ -1,6 +1,11 @@
 <template x-component:series="index">
     <div>
-        <common-pagetitle>Series</common-pagetitle>
+        <common-pagetitle
+            >Series
+            <common-counttag
+                :count="$api.$of().$of().series.length"
+            ></common-counttag>
+        </common-pagetitle>
         <div class="my-4">
             <ul>
                 <template x-for="s in $api.series">

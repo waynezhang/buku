@@ -1,0 +1,9 @@
+<template x-component:common="metatag" class="inline">
+    <div
+        class="inline mr-2 px-2 py-0.5 bg-gray-50 lowercase text-xs text-gray-400"
+    >
+        <span class="" x-text="$api.$prop('key')"></span>:
+        <span class="" x-text="$api.$prop('value')"></span>
+        <slot></slot>
+    </div>
+</template>

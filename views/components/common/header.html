@@ -1,21 +1,19 @@
 <template x-component:common="header">
     <div>
-        <h1 class="font-medium text-4xl">
-            <a class="text-gray-700" href="/page/home">buku</a>
-        </h1>
+        <h1 class="font-medium text-4xl cursor-default">buku</h1>
         <nav
             class="flex justify-left mt-4 mb-10"
-            x-shtml="$api && $api.navHTML || ''"
+            x-shtml="$api && $api.nav_html || ''"
         />
     </div>
     <script>
         return {
-            navHTML: "",
+            nav_html: "",
             onMounted() {
                 const links = [
+                    ["/page/home", "Home"],
                     ["/page/backlog", "Backlog"],
                     ["/page/admin", "Admin"],
-                    ["/page/books", "Search"],
                     ["/page/book/new", "New"],
                 ];
                 const eles = $vui._.map(links, (link) => {
@@ -31,7 +29,7 @@
                     e.textContent = link[1];
                     return e.outerHTML;
                 });
-                this.navHTML = eles.join("");
+                this.nav_html = eles.join("");
             },
         };
     </script>

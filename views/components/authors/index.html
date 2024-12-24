@@ -1,6 +1,11 @@
 <template x-component:authors="index">
     <div>
-        <common-pagetitle>Authors</common-pagetitle>
+        <common-pagetitle
+            >Authors
+            <common-counttag
+                :count="$api.$of().$of().authors.length"
+            ></common-counttag>
+        </common-pagetitle>
         <div class="my-4">
             <div class="my-4">
                 <input
