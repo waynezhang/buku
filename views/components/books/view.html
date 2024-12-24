@@ -24,11 +24,16 @@
             <div :class="$api.value_class" x-text="$api.book.comments"></div>
         </div>
         <div class="mt-8 flex gap-4">
-            <template x-if="$api.book.status != 'reading'">
+            <template x-if="$api.book.status == 'to-read'">
                 <common-button
                     type="primary"
                     @click="$api.$of().changeStatus('reading')"
                     >Start</common-button
+                >
+            </template>
+            <template x-if="$api.book.status == 'read'">
+                <common-button @click="$api.$of().changeStatus('reading')"
+                    >Restart</common-button
                 >
             </template>
             <template x-if="$api.book.status == 'reading'">
