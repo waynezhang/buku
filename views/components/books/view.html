@@ -5,9 +5,18 @@
         ></common-pagetitle>
         <div class="grid grid-cols-8 items-center">
             <div :class="$api.label_class">Author</div>
-            <div :class="$api.value_class" x-text="$api.book.author"></div>
+            <a
+                :class="$api.value_class"
+                :href="'/page/author/' + $api.book.author"
+                x-text="$api.book.author"
+                class="inline"
+            ></a>
             <div :class="$api.label_class">Series</div>
-            <div :class="$api.value_class" x-text="$api.book.series"></div>
+            <a
+                :class="$api.value_class"
+                :href="'/page/series/' + $api.book.series"
+                x-text="$api.book.series"
+            ></a>
             <div :class="$api.label_class">ISBN</div>
             <div :class="$api.value_class" x-text="$api.book.isbn"></div>
             <div :class="$api.label_class">Started</div>

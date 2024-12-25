@@ -164,8 +164,13 @@
                     this.data.title = "New Book";
                 }
 
-                this.data.authors_candidates = await $json("/api/authors.json");
-                this.data.series_candidates = await $json("/api/series.json");
+                const authors = await $json("/api/authors.json");
+                this.data.authors_candidates = $vui._.map(
+                    authors,
+                    (e) => e.name,
+                );
+                const series = await $json("/api/series.json");
+                this.data.series_candidates = $vui._.map(series, (e) => e.name);
             },
             async loadBook(id) {
                 const book = await $json("/api/book/" + id + ".json");
