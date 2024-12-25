@@ -3,6 +3,12 @@
         <common-pagetitle
             ><span x-text="$api.$of('').book.title"></span
         ></common-pagetitle>
+        <common-message type="info">
+            <span x-text="$api.$of('').info_message"></span>
+        </common-message>
+        <common-message type="error">
+            <span x-text="$api.$of('').error_message"></span>
+        </common-message>
         <div class="grid grid-cols-8 items-center">
             <div :class="$api.label_class">Author</div>
             <a
@@ -41,8 +47,8 @@
                 >
             </template>
             <template x-if="$api.book.status == 'read'">
-                <common-button @click="$api.$of().changeStatus('reading')"
-                    >Restart</common-button
+                <common-button @click="$api.$of().reread()"
+                    >Reread</common-button
                 >
             </template>
             <template x-if="$api.book.status == 'reading'">
@@ -84,6 +90,8 @@
             label_class: "text-sm col-span-2 text-gray-500 my-2",
             value_class: "col-span-6 whitespace-pre-wrap",
             book_status: "",
+            info_message: "",
+            error_message: "",
             book: {},
             async onMounted() {
                 this.book_id = this.$prop("book-id");
@@ -100,6 +108,7 @@
                 this.book_status = smap[this.book.status];
             },
             async changeStatus(status) {
+                this.clearMessage();
                 await $json(
                     "/api/book/" + this.book_id + "/status.json",
                     "POST",
@@ -109,7 +118,25 @@
                 );
                 await this.doUpdate();
             },
+            async reread() {
+                this.clearMessage();
+                try {
+                    const book = await $json("/api/book.json", "POST", {
+                        title: this.book.title,
+                        author: this.book.author,
+                        series: this.book.series,
+                        isbn: this.book.isbn,
+                        started_at: formatDate(new Date()),
+                        comments: "",
+                    });
+                    await this.navigateToBook(book.id);
+                    this.info_message = "Restarted " + book.title + "!";
+                } catch (e) {
+                    this.error_message = e;
+                }
+            },
             async confirmDelete() {
+                this.clearMessage();
                 const confirmed = confirm("Are your sure to delete this book?");
                 if (!confirmed) {
                     return;
@@ -119,6 +146,16 @@
             },
             async navigateToEditPage() {
                 this.$router.navigate("/page/book/" + this.book_id + "/edit");
+            },
+            async navigateToBook(id) {
+                this.$router.navigate("/page/book/" + id);
+                this.book_id = id;
+
+                await this.doUpdate();
+            },
+            async clearMessage() {
+                this.info_message = "";
+                this.error_message = "";
             },
         };
     </script>
