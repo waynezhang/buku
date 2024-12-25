@@ -4,13 +4,13 @@
             <template x-for="book in $prop('books')">
                 <li>
                     <a :href="'/page/book/' + book.id" x-text="book.title"></a>
-                    <template x-if="book.author">
+                    <template x-if="book.author && !$prop('hide-author')">
                         <span>
                             <span class="text-gray-400"> / </span>
                             <a
                                 :href="'/page/author/' + book.author"
                                 x-text="book.author"
-                                class="text-base"
+                                class="text-base text-zinc-400 hover:text-zinc-600"
                             ></a>
                         </span>
                     </template>
@@ -28,9 +28,9 @@
         <script>
             return {
                 tag_class_map: {
-                    "to-read": "text-orange-700",
+                    "to-read": "text-orange-800",
                     reading: "text-green-700",
-                    read: "text-gray-300",
+                    read: "text-gray-200",
                 },
             };
         </script>

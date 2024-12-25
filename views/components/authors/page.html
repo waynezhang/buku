@@ -10,6 +10,7 @@
             <common-booklist
                 :books="$api.$of('').books"
                 show-tag="true"
+                hide-author="true"
             ></common-booklist>
             <template x-if="$api.books.length == 0">
                 <common-message type="info">No books found.</common-message>
