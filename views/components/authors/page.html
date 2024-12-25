@@ -11,6 +11,9 @@
                 :books="$api.$of('').books"
                 show-tag="true"
             ></common-booklist>
+            <template x-if="$api.books.length == 0">
+                <common-message type="info">No books found.</common-message>
+            </template>
         </div>
         <div>
             <common-button @click="$api.$of().onClickRename()"

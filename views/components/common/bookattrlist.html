@@ -1,0 +1,71 @@
+<template x-component:common="bookattrlist">
+    <div>
+        <common-pagetitle
+            ><span x-text="$api.$of().title"></span>
+            <common-counttag
+                :count="$api.$of().$of().data.length"
+            ></common-counttag>
+        </common-pagetitle>
+        <div class="my-4">
+            <div class="my-4">
+                <input
+                    class="block w-full px-2 py-1 text-gray-700 border border-gray-700"
+                    placeholder="Search"
+                    x-model="$api.keyword"
+                    @input.debounce.300ms="$api.doSearch()"
+                />
+            </div>
+            <div>
+                <ul>
+                    <template x-for="a in $api.data">
+                        <li>
+                            <a
+                                :href="$api.item_link + '/' + a.name"
+                                x-text="a.name"
+                            ></a>
+                            <common-counttag :count="a.count"></common-counttag>
+                        </li>
+                    </template>
+                </ul>
+            </div>
+            <template x-if="$api.data.length == 0">
+                <common-message type="info">No data found.</common-message>
+            </template>
+        </div>
+        <slot></slot>
+    </div>
+    <script>
+        return {
+            title: "",
+            list_api: "",
+            item_link: "",
+            keyword: "",
+            data: [],
+            async onMounted() {
+                const map = {
+                    series: {
+                        title: "Series",
+                        list_api: "/api/series.json",
+                        item_link: "/page/series",
+                    },
+                    author: {
+                        title: "Author",
+                        list_api: "/api/authors.json",
+                        item_link: "/page/author",
+                    },
+                };
+                const attr = this.$prop("bookattr");
+                this.title = map[attr].title;
+                this.list_api = map[attr].list_api;
+                this.item_link = map[attr].item_link;
+
+                await this.doSearch();
+            },
+            async doSearch() {
+                this.data = await $json(
+                    this.list_api + "?name=" + this.keyword,
+                );
+            },
+        };
+    </script>
+</template>

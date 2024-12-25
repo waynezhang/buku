@@ -1,31 +1,3 @@
 <template x-component:series="index">
-    <div>
-        <common-pagetitle
-            >Series
-            <common-counttag
-                :count="$api.$of().$of().series.length"
-            ></common-counttag>
-        </common-pagetitle>
-        <div class="my-4">
-            <ul>
-                <template x-for="s in $api.series">
-                    <li>
-                        <a :href="'/page/series/' +s" x-text="s"></a>
-                    </li>
-                </template>
-            </ul>
-            <template x-if="$api.series.length == 0">
-                <common-message type="info">No series found.</common-message>
-            </template>
-        </div>
-        <slot></slot>
-    </div>
-    <script>
-        return {
-            series: [],
-            async onMounted() {
-                this.series = await $json("/api/series.json");
-            },
-        };
-    </script>
+    <common-bookattrlist bookattr="series"></common-bookattrlist>
 </template>

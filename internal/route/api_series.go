@@ -2,14 +2,17 @@ package route
 
 import (
 	"net/url"
-	"waynezhang/buku/internal/repo/series"
+	"waynezhang/buku/internal/repo"
 
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
 )
 
 func apiSeries(c *fiber.Ctx, db *gorm.DB) error {
-	return c.JSON(series.GetAll(db))
+	name := c.Query("name")
+	order := c.Query("order")
+	series := repo.GetAll(db, "series", name, order)
+	return c.JSON(series)
 }
 
 func apiRenameSeries(c *fiber.Ctx, db *gorm.DB) error {
@@ -24,7 +27,7 @@ func apiRenameSeries(c *fiber.Ctx, db *gorm.DB) error {
 
 	oldName, _ := url.QueryUnescape(c.Params("name"))
 
-	if err := series.Rename(db, oldName, r.Name); err != nil {
+	if err := repo.Rename(db, "series", oldName, r.Name); err != nil {
 		return renderJSONError(c, err.Error())
 	}
 
