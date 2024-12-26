@@ -14,9 +14,16 @@
                             ></a>
                         </span>
                     </template>
+                    <template x-if="$prop('show-series') && book.series">
+                        <a
+                            :href="'/page/series/' + book.series"
+                            x-text="book.series"
+                            class="px-1 py-0.5 text-xs text-zinc-400 hover:text-zinc-600 border border-gray-200"
+                        ></a>
+                    </template>
                     <template x-if="$prop('show-tag')">
                         <span
-                            class="ml-2 text-base"
+                            class="ml-2 text-sm"
                             :class="$api.tag_class_map[book.status]"
                             x-text="'#' + book.status"
                         ></span>
