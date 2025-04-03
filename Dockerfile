@@ -1,9 +1,17 @@
-FROM golang:latest
+# Build
+FROM golang:latest as build
 
-WORKDIR /app
+WORKDIR /go/src/app
 
 COPY . .
-
 RUN make build
 
-ENTRYPOINT ["/app/bin/buku"]
+# Run
+FROM gcr.io/distroless/base
+WORKDIR /app
+
+COPY --from=build /go/src/app/bin/buku /app
+COPY static ./static
+COPY views ./views
+
+ENTRYPOINT ["/app/buku"]
