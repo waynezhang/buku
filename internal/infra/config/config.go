@@ -11,6 +11,8 @@ type Config struct {
 	DatabasePath string
 	Debug        bool
 	ListenPort   string
+	Username     string
+	Password     string
 }
 
 func Load() *Config {
@@ -19,6 +21,8 @@ func Load() *Config {
 		DatabasePath: getEnv("DB_PATH", "./db.sqlite"),
 		Debug:        getEnv("DEBUG", "false") == "true",
 		ListenPort:   getEnv("LISTEN_PORT", ":9000"),
+		Username:     getEnv("BUKU_USERNAME", "admin"),
+		Password:     getEnv("BUKU_PASSWORD", "password"),
 	}
 	log.Debug("Config ", config)
 

@@ -1,127 +1,138 @@
 package route
 
 import (
-	"fmt"
-	"time"
 	"waynezhang/buku/internal/infra/config"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
-	"github.com/gofiber/template/html/v2"
+	"github.com/gofiber/fiber/v2/middleware/session"
 	"gorm.io/gorm"
 )
 
-func Load(cfg *config.Config, db *gorm.DB) *fiber.App {
-	// engine := pug.New("./views", ".pug")
-	engine := html.New("./views", ".html")
-	engine.Debug(cfg.Debug)
-	engine.Reload(cfg.Debug)
-	engine.AddFunc("now", func() string {
-		return time.Now().Format("2006-01-02")
-	})
-	engine.AddFunc("this_year", func() string {
-		return fmt.Sprintf("%d", time.Now().Year())
-	})
-	engine.AddFunc("date_fmt", func(t *time.Time) string {
-		if t == nil {
-			return ""
-		} else {
-			return t.Format("2006-01-02")
-		}
-	})
+var store *session.Store
 
-	f := fiber.New(fiber.Config{
-		Views: engine,
-	})
+// Authentication middleware
+func requireAuth(c *fiber.Ctx) error {
+	sess, err := store.Get(c)
+	if err != nil {
+		return c.Status(401).JSON(fiber.Map{"ok": false, "message": "Authentication required"})
+	}
+
+	authenticated := sess.Get("authenticated")
+	if authenticated != true {
+		return c.Status(401).JSON(fiber.Map{"ok": false, "message": "Authentication required"})
+	}
+
+	return c.Next()
+}
+
+func Load(cfg *config.Config, db *gorm.DB) *fiber.App {
+	f := fiber.New()
 	f.Use(logger.New())
 
-	f.Get("/", func(c *fiber.Ctx) error { return c.Redirect("/page/home") })
+	// Initialize session store
+	store = session.New()
+
+	f.Get("/", func(c *fiber.Ctx) error { return c.Redirect("/page/login") })
 
 	f.Static("/", "./static")
 	f.Get("/health", func(c *fiber.Ctx) error { return c.SendString("OK") })
 
-	f.Get(API_HOME, func(c *fiber.Ctx) error {
+	// Authentication routes (unprotected)
+	f.Post("/api/login", func(c *fiber.Ctx) error {
+		return apiLogin(c, cfg)
+	})
+	f.Post("/api/logout", func(c *fiber.Ctx) error {
+		return apiLogout(c)
+	})
+	f.Get("/api/auth/check", func(c *fiber.Ctx) error {
+		return apiCheckAuth(c)
+	})
+
+	// Protected API routes
+	api := f.Group("/api", requireAuth)
+
+	api.Get("/home.json", func(c *fiber.Ctx) error {
 		return apiHome(c, db)
 	})
 
 	// books
-	f.Get(API_BOOKS, func(c *fiber.Ctx) error {
+	api.Get("/books.json", func(c *fiber.Ctx) error {
 		return apiBooks(c, db)
 	})
-	f.Get(API_BOOKS_BY_STATUS, func(c *fiber.Ctx) error {
+	api.Get("/books/:status.json", func(c *fiber.Ctx) error {
 		return apiBooksByStatus(c, db)
 	})
-	f.Get(API_BOOKS_BY_YEAR, func(c *fiber.Ctx) error {
+	api.Get("/books/year/:year<int>.json", func(c *fiber.Ctx) error {
 		return apiBooksByYear(c, db)
 	})
-	f.Get(API_BOOKS_BY_AUTHOR, func(c *fiber.Ctx) error {
+	api.Get("/books/author/:name.json", func(c *fiber.Ctx) error {
 		return apiBooksByAuthor(c, db)
 	})
-	f.Get(API_BOOKS_BY_SERIES, func(c *fiber.Ctx) error {
+	api.Get("/books/series/:name.json", func(c *fiber.Ctx) error {
 		return apiBooksBySeries(c, db)
 	})
 
 	// book
-	f.Get(API_BOOK_BY_ID, func(c *fiber.Ctx) error {
+	api.Get("/book/:id<int>.json", func(c *fiber.Ctx) error {
 		return apiBookById(c, db)
 	})
-	f.Delete(API_BOOK_BY_ID, func(c *fiber.Ctx) error {
+	api.Delete("/book/:id<int>.json", func(c *fiber.Ctx) error {
 		return apiDeleteBookById(c, db)
 	})
-	f.Post(API_CREATE_BOOK, func(c *fiber.Ctx) error {
+	api.Post("/book.json", func(c *fiber.Ctx) error {
 		return apiCreateBook(c, db)
 	})
-	f.Post(API_UPDATE_BOOK, func(c *fiber.Ctx) error {
+	api.Post("/book/:id<int>.json", func(c *fiber.Ctx) error {
 		return apiUpdateBook(c, db)
 	})
-	f.Post(API_BOOK_CHANGE_STATUS, func(c *fiber.Ctx) error {
+	api.Post("/book/:id<int>/status.json", func(c *fiber.Ctx) error {
 		return apiBookChangeStatus(c, db)
 	})
 
 	// google book
-	f.Get(API_GOOGLE_BOOK_SEARCH, func(c *fiber.Ctx) error {
+	api.Get("/google_book_search.json", func(c *fiber.Ctx) error {
 		return apiGoogleBookSearch(c)
 	})
 
 	// authors
-	f.Get(API_AUTHORS, func(c *fiber.Ctx) error {
+	api.Get("/authors.json", func(c *fiber.Ctx) error {
 		return apiAuthors(c, db)
 	})
-	f.Post(API_RENAME_AUTHOR, func(c *fiber.Ctx) error {
+	api.Post("/author/:name.json", func(c *fiber.Ctx) error {
 		return apiRenameAuthor(c, db)
 	})
 
 	// series
-	f.Get(API_SERIES, func(c *fiber.Ctx) error {
+	api.Get("/series.json", func(c *fiber.Ctx) error {
 		return apiSeries(c, db)
 	})
-	f.Post(API_RENAME_SERIES, func(c *fiber.Ctx) error {
+	api.Post("/series/:name.json", func(c *fiber.Ctx) error {
 		return apiRenameSeries(c, db)
 	})
 
 	// admin
-	f.Post(API_DELETE_ALL, func(c *fiber.Ctx) error {
+	api.Post("/delete_all.json", func(c *fiber.Ctx) error {
 		return apiDeleteAll(c, db)
 	})
 
 	// import
-	f.Post(API_ADMIN_IMPORT_READ_COLUMNS, func(c *fiber.Ctx) error {
+	api.Post("/import/read_columns", func(c *fiber.Ctx) error {
 		return apiImportReadColumns(c)
 	})
-	f.Post(API_ADMIN_IMPORT, func(c *fiber.Ctx) error {
+	api.Post("/import", func(c *fiber.Ctx) error {
 		return apiImport(c, db)
 	})
 
 	// export
-	f.Get(API_ADMIN_EXPORT, func(c *fiber.Ctx) error {
+	api.Get("/export", func(c *fiber.Ctx) error {
 		return handleCSVExportRequest(c, db)
 	})
 
-	// fallback
-	f.Group("/page", func(c *fiber.Ctx) error {
-		return render(c, "page/index", fiber.Map{})
+	// SPA fallback - serve index.html for all /page routes
+	f.Get("/page/*", func(c *fiber.Ctx) error {
+		return c.SendFile("./static/index.html")
 	})
-	f.Static("/components", "./views/components")
 
 	return f
 }
