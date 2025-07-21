@@ -24,7 +24,8 @@ func Load() *Config {
 		Username:     getEnv("BUKU_USERNAME", "admin"),
 		Password:     getEnv("BUKU_PASSWORD", "password"),
 	}
-	log.Debug("Config ", config)
+	log.Debugf("Config: DatabasePath=%s, Debug=%t, ListenPort=%s, Username=%s",
+		config.DatabasePath, config.Debug, config.ListenPort, config.Username)
 
 	return &config
 }
