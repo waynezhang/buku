@@ -119,8 +119,8 @@ const Header = {
                 </h1>
                 <div class="flex items-center">
                     <button v-if="isAuthenticated" @click="logout" 
-                            class="hidden md:block text-sm text-gray-600 hover:text-gray-900 px-3 py-1.5 rounded-md hover:bg-gray-100">
-                        Logout
+                            class="hidden md:block text-xs text-gray-400 hover:text-gray-600 transition-colors">
+                        ⏻
                     </button>
                     <button @click="toggleMenu" class="md:hidden ml-4 text-gray-600 hover:text-gray-900">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -218,7 +218,7 @@ const Header = {
 // Footer Component
 const Footer = {
   template: `
-        <footer class="mt-12 pt-8 border-t border-gray-200 text-center text-gray-500 text-sm">
+        <footer class="mt-12 pt-8 text-center text-gray-500 text-sm">
             <p>&copy; 2025 buku</p>
         </footer>
     `
@@ -320,6 +320,16 @@ const Home = {
             bar: {
               borderRadius: 4,
             }
+          },
+          onClick: (event, elements) => {
+            if (elements.length > 0) {
+              const element = elements[0];
+              const year = yearRecords[element.index].year;
+              navigate(`/page/book/year/${year}`);
+            }
+          },
+          onHover: (event, elements) => {
+            event.native.target.style.cursor = elements.length > 0 ? 'pointer' : 'default';
           }
         }
       });
@@ -363,7 +373,7 @@ const Home = {
             </div>
             
             <div v-if="homeData.reading_books && homeData.reading_books.length > 0">
-                <h2 class="text-xl font-medium mb-4">Currently Reading</h2>
+                <h2 class="text-xl font-medium mb-4">Reading</h2>
                 <div class="space-y-3">
                     <div v-for="book in homeData.reading_books" :key="book.id" 
                          class="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer"
@@ -376,7 +386,7 @@ const Home = {
             </div>
             
             <div v-if="homeData.year_records && homeData.year_records.length > 0">
-                <h2 class="text-xl font-medium mb-4">Reading by Year</h2>
+                <h2 class="text-xl font-medium mb-4">By Year</h2>
                 <div class="bg-white p-6 rounded-lg shadow-sm">
                     <div class="h-64 w-full">
                         <canvas ref="chartCanvas"></canvas>
@@ -447,24 +457,24 @@ const BooksList = {
             
             <!-- Status Filter -->
             <div class="mb-6">
-                <div class="flex space-x-2">
+                <div class="grid grid-cols-2 gap-2 sm:flex sm:gap-2">
                     <button @click="changeStatus('to-read')" 
-                            class="px-3 py-1.5 rounded-md text-sm transition-colors"
+                            class="px-2 sm:px-3 py-1.5 rounded-md text-xs sm:text-sm transition-colors text-center"
                             :class="currentStatus === 'to-read' ? 'bg-yellow-100 text-yellow-800 border border-yellow-300' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'">
                         📚 To Read
                     </button>
                     <button @click="changeStatus('reading')" 
-                            class="px-3 py-1.5 rounded-md text-sm transition-colors"
+                            class="px-2 sm:px-3 py-1.5 rounded-md text-xs sm:text-sm transition-colors text-center"
                             :class="currentStatus === 'reading' ? 'bg-blue-100 text-blue-800 border border-blue-300' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'">
                         📖 Reading
                     </button>
                     <button @click="changeStatus('read')" 
-                            class="px-3 py-1.5 rounded-md text-sm transition-colors"
+                            class="px-2 sm:px-3 py-1.5 rounded-md text-xs sm:text-sm transition-colors text-center"
                             :class="currentStatus === 'read' ? 'bg-green-100 text-green-800 border border-green-300' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'">
                         ✅ Read
                     </button>
                     <button @click="changeStatus('all')" 
-                            class="px-3 py-1.5 rounded-md text-sm transition-colors"
+                            class="px-2 sm:px-3 py-1.5 rounded-md text-xs sm:text-sm transition-colors text-center"
                             :class="currentStatus === 'all' ? 'bg-gray-100 text-gray-800 border border-gray-300' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'">
                         📋 All Books
                     </button>
@@ -1427,7 +1437,7 @@ const AuthorBooks = {
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                         </svg>
                     </button>
-                    <h2 class="text-xl font-medium">Books by {{ author }}</h2>
+                    <h2 class="text-xl font-medium">{{ author }}</h2>
                 </div>
                 <button @click="openRenameModal"
                         class="bg-indigo-600 text-white px-3 py-1.5 rounded-md hover:bg-indigo-700 text-sm flex items-center">
@@ -1573,7 +1583,7 @@ const SeriesBooks = {
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                         </svg>
                     </button>
-                    <h2 class="text-xl font-medium">{{ series }} Series</h2>
+                    <h2 class="text-xl font-medium">{{ series }}</h2>
                 </div>
                 <button @click="openRenameModal"
                         class="bg-indigo-600 text-white px-3 py-1.5 rounded-md hover:bg-indigo-700 text-sm flex items-center">
@@ -1635,6 +1645,89 @@ const SeriesBooks = {
     `
 };
 
+// YearBooks Component
+const YearBooks = {
+  props: ['year'],
+  setup(props) {
+    const books = ref([]);
+    const loading = ref(true);
+    const yearStats = ref(null);
+
+    const fetchYearBooks = async () => {
+      try {
+        loading.value = true;
+        const response = await $json(`/api/books/year/${props.year}.json`);
+        console.log('API Response:', response); // Debug log
+        
+        // Handle different possible response structures
+        if (Array.isArray(response)) {
+          books.value = response;
+          yearStats.value = null;
+        } else {
+          books.value = response.books || response.data || [];
+          yearStats.value = response.stats || null;
+        }
+        
+        console.log('Books:', books.value); // Debug log
+      } catch (error) {
+        console.error('Error fetching year books:', error);
+      } finally {
+        loading.value = false;
+      }
+    };
+
+    const navigate = (path) => {
+      router.push(path);
+    };
+
+    const getStatusLabel = (status) => {
+      return status.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase());
+    };
+
+    onMounted(fetchYearBooks);
+
+    return { books, loading, yearStats, navigate, getStatusLabel, formatDate };
+  },
+  template: `
+        <div>
+            <div class="mb-6">
+                <h1 class="text-2xl font-light">
+                    {{ year }}
+                    <span class="text-sm text-gray-400 font-normal ml-2">({{ books.length }})</span>
+                </h1>
+            </div>
+            
+            <div v-if="loading" class="text-center py-8">Loading...</div>
+            <div v-else-if="books.length === 0" class="text-center py-8 text-gray-500">
+                No books found for {{ year }}
+            </div>
+            <div v-else class="space-y-3">
+                <div v-for="book in books" :key="book.id" 
+                     class="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                     @click="navigate('/page/book/' + book.id)">
+                    <h3 class="font-normal">{{ book.title }}</h3>
+                    <p class="text-sm text-gray-600">{{ book.author }}</p>
+                    <div class="flex justify-between items-center mt-2">
+                        <span class="text-xs px-2 py-1 rounded" 
+                              :class="{
+                                  'bg-green-100 text-green-800': book.status === 'read',
+                                  'bg-blue-100 text-blue-800': book.status === 'reading',
+                                  'bg-yellow-100 text-yellow-800': book.status === 'to-read'
+                              }">
+                            {{ getStatusLabel(book.status) }}
+                        </span>
+                        <div class="text-xs text-gray-500">
+                            <span v-if="book.finished_at">Finished: {{ formatDate(book.finished_at) }}</span>
+                            <span v-else-if="book.started_at">Started: {{ formatDate(book.started_at) }}</span>
+                            <span v-else>Added: {{ formatDate(book.created_at) }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `
+};
+
 // Login Component
 const Login = {
   setup() {
@@ -1682,38 +1775,36 @@ const Login = {
     return { username, password, loading, error, login, handleSubmit };
   },
   template: `
-        <div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-            <div class="max-w-md w-full space-y-8">
-                <div>
-                    <h2 class="mt-6 text-center text-3xl font-medium text-gray-900">
-                        Sign in to buku
-                    </h2>
-                </div>
-                <form @submit="handleSubmit" class="mt-8 space-y-6">
-                    <div class="space-y-4">
+        <div class="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+            <div class="w-full max-w-sm">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
+                    <div class="text-center mb-8">
+                        <h1 class="text-2xl font-light text-gray-900">buku</h1>
+                        <p class="text-sm text-gray-500 mt-2">Sign in to continue</p>
+                    </div>
+                    
+                    <form @submit="handleSubmit" class="space-y-6">
                         <div>
-                            <label for="username" class="block text-sm font-medium text-gray-600">Username</label>
                             <input v-model="username" id="username" type="text" required
-                                   class="mt-1 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                                   placeholder="Username"
+                                   class="w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm placeholder-gray-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 transition-colors">
                         </div>
                         <div>
-                            <label for="password" class="block text-sm font-medium text-gray-600">Password</label>
                             <input v-model="password" id="password" type="password" required
-                                   class="mt-1 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                                   placeholder="Password"
+                                   class="w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm placeholder-gray-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 transition-colors">
                         </div>
-                    </div>
 
-                    <div v-if="error" class="text-red-600 text-sm text-center">
-                        {{ error }}
-                    </div>
+                        <div v-if="error" class="text-red-500 text-sm text-center bg-red-50 rounded-lg py-2">
+                            {{ error }}
+                        </div>
 
-                    <div>
                         <button type="submit" :disabled="loading"
-                                class="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 text-sm font-medium">
+                                class="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 text-sm font-medium transition-colors">
                             {{ loading ? 'Signing in...' : 'Sign in' }}
                         </button>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
     `
@@ -1732,6 +1823,7 @@ const App = {
     AuthorBooks,
     Series,
     SeriesBooks,
+    YearBooks,
     Admin,
     Import,
     Login
@@ -1812,6 +1904,7 @@ const App = {
       if (path === '/page/backlog') return 'BooksList';
       if (path === '/page/book/new') return 'BookEdit';
       if (path.startsWith('/page/book/') && path.endsWith('/edit')) return 'BookEdit';
+      if (path.startsWith('/page/book/year/')) return 'YearBooks';
       if (path.startsWith('/page/book/')) return 'BookView';
       if (path === '/page/authors') return 'Authors';
       if (path.startsWith('/page/author/')) return 'AuthorBooks';
@@ -1830,6 +1923,10 @@ const App = {
       if (path === '/page/backlog') return { status: 'to-read' };
       if (path === '/page/book/new') return {}; // For new book, don't pass bookId
       if (path.startsWith('/page/book/') && path.endsWith('/edit')) return { bookId: params.id };
+      if (path.startsWith('/page/book/year/')) {
+        const yearMatch = path.match(/\/page\/book\/year\/(\d+)/);
+        return { year: yearMatch ? yearMatch[1] : params.year };
+      }
       if (path.startsWith('/page/book/')) return { bookId: params.id };
       if (path.startsWith('/page/author/')) return { author: params.author };
       if (path.startsWith('/page/series/')) return { series: params.series };
