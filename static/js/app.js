@@ -87,8 +87,11 @@ const router = {
 const Header = {
   props: ['currentPath', 'isAuthenticated'],
   setup(props) {
+    const isMenuOpen = ref(false);
+
     const navigate = (path) => {
       router.push(path);
+      isMenuOpen.value = false; // Close menu on navigation
     };
 
     const logout = async () => {
@@ -102,7 +105,11 @@ const Header = {
       }
     };
 
-    return { navigate, logout };
+    const toggleMenu = () => {
+      isMenuOpen.value = !isMenuOpen.value;
+    };
+
+    return { navigate, logout, isMenuOpen, toggleMenu };
   },
   template: `
         <header class="mb-8">
@@ -110,13 +117,22 @@ const Header = {
                 <h1 class="text-2xl font-light">
                     <a href="#" @click.prevent="navigate('/page/home')" class="text-gray-900 hover:text-indigo-600">buku</a>
                 </h1>
-                <button v-if="isAuthenticated" @click="logout" 
-                        class="text-sm text-gray-600 hover:text-gray-900 px-3 py-1.5 rounded-md hover:bg-gray-100">
-                    Logout
-                </button>
+                <div class="flex items-center">
+                    <button v-if="isAuthenticated" @click="logout" 
+                            class="hidden md:block text-sm text-gray-600 hover:text-gray-900 px-3 py-1.5 rounded-md hover:bg-gray-100">
+                        Logout
+                    </button>
+                    <button @click="toggleMenu" class="md:hidden ml-4 text-gray-600 hover:text-gray-900">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path v-if="!isMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                            <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
             </div>
             <nav>
-                <div class="flex space-x-8">
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-8">
                     <a href="#" @click.prevent="navigate('/page/home')" 
                        class="text-sm transition-colors flex items-center gap-1.5"
                        :class="currentPath === '/page/home' ? 'text-indigo-600 font-medium' : 'text-gray-600 hover:text-gray-900'">
@@ -159,6 +175,40 @@ const Header = {
                        </svg>
                        Admin
                     </a>
+                </div>
+                <!-- Mobile Menu -->
+                <div v-if="isMenuOpen" class="md:hidden mt-4">
+                    <a href="#" @click.prevent="navigate('/page/home')" 
+                       class="block py-2 px-3 rounded-md text-base font-medium"
+                       :class="currentPath === '/page/home' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'">
+                       Dashboard
+                    </a>
+                    <a href="#" @click.prevent="navigate('/page/books')" 
+                       class="block py-2 px-3 rounded-md text-base font-medium"
+                       :class="currentPath === '/page/books' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'">
+                       Books
+                    </a>
+                    <a href="#" @click.prevent="navigate('/page/authors')" 
+                       class="block py-2 px-3 rounded-md text-base font-medium"
+                       :class="currentPath === '/page/authors' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'">
+                       Authors
+                    </a>
+                    <a href="#" @click.prevent="navigate('/page/serieses')" 
+                       class="block py-2 px-3 rounded-md text-base font-medium"
+                       :class="currentPath === '/page/serieses' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'">
+                       Series
+                    </a>
+                    <a href="#" @click.prevent="navigate('/page/admin')" 
+                       class="block py-2 px-3 rounded-md text-base font-medium"
+                       :class="currentPath.startsWith('/page/admin') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'">
+                       Admin
+                    </a>
+                    <div v-if="isAuthenticated" class="border-t border-gray-200 mt-4 pt-4">
+                        <button @click="logout" 
+                                class="w-full text-left block py-2 px-3 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">
+                            Logout
+                        </button>
+                    </div>
                 </div>
             </nav>
         </header>
@@ -496,13 +546,13 @@ const BookView = {
   },
   template: `
         <div v-if="loading" class="text-center py-8">Loading...</div>
-        <div v-else-if="book" class="space-y-8">
+        <div v-else-if="book" class="space-y-6">
             <!-- Header Section with Book Info -->
-            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-8 rounded-xl shadow-sm">
-                <div class="flex justify-between items-start">
-                    <div class="flex-1">
-                        <div class="mb-4">
-                            <span class="inline-block px-3 py-1 rounded-full text-xs font-medium mb-3"
+            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 md:p-8 rounded-xl shadow-sm">
+                <div class="flex flex-col md:flex-row md:items-start md:justify-between">
+                    <div class="flex-1 mb-4 md:mb-0">
+                        <div class="mb-3">
+                            <span class="inline-block px-3 py-1 rounded-full text-xs font-medium"
                                   :class="{
                                       'bg-green-100 text-green-800': book.status === 'read',
                                       'bg-blue-100 text-blue-800': book.status === 'reading',
@@ -511,37 +561,41 @@ const BookView = {
                                 {{ book.status.replace('-', ' ').toUpperCase() }}
                             </span>
                         </div>
-                        <h1 class="text-3xl font-light text-gray-900 mb-2">{{ book.title }}</h1>
-                        <p class="text-xl text-gray-600 mb-3">by {{ book.author }}</p>
-                        <div v-if="book.series" class="flex items-center text-gray-500">
+                        <div class="flex flex-col md:flex-row md:items-start md:justify-between">
+                            <div>
+                                <h1 class="text-2xl md:text-3xl font-light text-gray-900 mb-2">{{ book.title }}</h1>
+                                <p class="text-lg md:text-xl text-gray-600 mb-3">by {{ book.author }}</p>
+                            </div>
+                            <div class="flex space-x-2 mt-4 md:flex-col md:space-y-2 md:space-x-0 md:mt-0 md:ml-4">
+                                <button @click="navigate('/page/book/' + book.id + '/edit')" 
+                                        class="bg-indigo-600 text-white px-3 py-1.5 rounded-md hover:bg-indigo-700 transition-colors flex items-center text-sm">
+                                    <svg class="w-3 h-3 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                    </svg>
+                                    Edit
+                                </button>
+                                <button @click="deleteBook" 
+                                        class="bg-red-600 text-white px-3 py-1.5 rounded-md hover:bg-red-700 transition-colors flex items-center text-sm">
+                                    <svg class="w-3 h-3 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                    </svg>
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                        <div v-if="book.series" class="flex items-center text-gray-500 mt-3">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
                             </svg>
                             <span class="text-sm">{{ book.series }}</span>
                         </div>
                     </div>
-                    <div class="flex space-x-2">
-                        <button @click="navigate('/page/book/' + book.id + '/edit')" 
-                                class="bg-indigo-600 text-white px-3 py-1.5 rounded-md hover:bg-indigo-700 transition-colors flex items-center text-sm">
-                            <svg class="w-3 h-3 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                            </svg>
-                            Edit
-                        </button>
-                        <button @click="deleteBook" 
-                                class="bg-red-600 text-white px-3 py-1.5 rounded-md hover:bg-red-700 transition-colors flex items-center text-sm">
-                            <svg class="w-3 h-3 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                            </svg>
-                            Delete
-                        </button>
-                    </div>
                 </div>
             </div>
 
             <!-- Reading Progress Section -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <div class="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-100">
                     <h3 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
                         <svg class="w-5 h-5 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
@@ -561,7 +615,7 @@ const BookView = {
                     </div>
                 </div>
 
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <div class="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-100">
                     <h3 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
                         <svg class="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
@@ -592,7 +646,7 @@ const BookView = {
             </div>
 
             <!-- Book Details Section -->
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+            <div class="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-100">
                 <h3 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
                     <svg class="w-5 h-5 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -617,7 +671,7 @@ const BookView = {
             </div>
 
             <!-- Quick Actions -->
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+            <div class="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-100">
                 <h3 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
                     <svg class="w-5 h-5 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
