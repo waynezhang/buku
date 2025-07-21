@@ -1743,6 +1743,8 @@ const App = {
     const routeParams = router.params;
     const isAuthenticated = ref(false);
     const isCheckingAuth = ref(true);
+    const showUpdatePrompt = ref(false);
+    const updateRegistration = ref(null);
 
     // Check authentication status
     const checkAuth = async () => {
@@ -1767,8 +1769,38 @@ const App = {
     // Make checkAuth available globally for login component
     window.refreshAuth = checkAuth;
 
+    // Service Worker Update Handling
+    const handleUpdate = () => {
+      if (updateRegistration.value) {
+        const newWorker = updateRegistration.value.waiting;
+        if (newWorker) {
+          newWorker.postMessage({ type: 'SKIP_WAITING' });
+        }
+      }
+      showUpdatePrompt.value = false;
+    };
+
+    const dismissUpdate = () => {
+      showUpdatePrompt.value = false;
+    };
+
     // Check auth on mount and when route changes
-    onMounted(checkAuth);
+    onMounted(() => {
+      checkAuth();
+      
+      // Set up service worker event listeners
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('sw-update-available', (event) => {
+          updateRegistration.value = event.detail.registration;
+          showUpdatePrompt.value = true;
+        });
+
+        window.addEventListener('sw-updated', () => {
+          // Reload the page when SW is updated
+          window.location.reload();
+        });
+      }
+    });
 
     const currentComponent = computed(() => {
       const path = currentRoute.value;
@@ -1810,7 +1842,10 @@ const App = {
       currentComponent,
       componentProps,
       isAuthenticated,
-      isCheckingAuth
+      isCheckingAuth,
+      showUpdatePrompt,
+      handleUpdate,
+      dismissUpdate
     };
   },
   template: `
@@ -1824,6 +1859,19 @@ const App = {
             <Header :currentPath="currentRoute" :isAuthenticated="isAuthenticated" />
             <component :is="currentComponent" v-bind="componentProps" />
             <Footer />
+            
+            <!-- PWA Update Prompt -->
+            <div v-if="showUpdatePrompt" class="fixed bottom-4 left-4 right-4 max-w-sm mx-auto bg-blue-600 text-white p-4 rounded-lg shadow-lg z-50">
+                <div class="text-sm font-medium mb-3">App Update Available</div>
+                <div class="flex space-x-2">
+                    <button @click="handleUpdate" class="bg-white text-blue-600 px-3 py-1 rounded text-sm font-medium">
+                        Update
+                    </button>
+                    <button @click="dismissUpdate" class="bg-blue-500 text-white px-3 py-1 rounded text-sm">
+                        Later
+                    </button>
+                </div>
+            </div>
         </div>
     `
 };
