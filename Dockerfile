@@ -12,6 +12,5 @@ WORKDIR /app
 
 COPY --from=build /go/src/app/bin/buku /app
 COPY static ./static
-COPY views ./views
 
 ENTRYPOINT ["/app/buku"]
