@@ -1776,8 +1776,8 @@ const Login = {
   },
   template: `
         <div class="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-            <div class="w-full max-w-sm">
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
+            <div class="w-full max-w-sm mx-auto">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 sm:p-8">
                     <div class="text-center mb-8">
                         <h1 class="text-2xl font-light text-gray-900">buku</h1>
                         <p class="text-sm text-gray-500 mt-2">Sign in to continue</p>
