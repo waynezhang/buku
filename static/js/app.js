@@ -351,12 +351,12 @@ const Home = {
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div @click="navigate('/page/books?status=all')"
                          class="bg-white p-4 rounded-lg shadow-sm cursor-pointer hover:shadow-md transition-shadow">
-                        <div class="text-2xl font-light">{{ (homeData.counts.to_read + homeData.counts.reading + homeData.counts.finished) || 0 }}</div>
+                        <div class="text-2xl font-light">{{ homeData.counts.finished || 0 }}</div>
                         <div class="text-sm text-gray-600">Total Books</div>
                     </div>
                     <div @click="navigate('/page/books?status=read')"
                          class="bg-white p-4 rounded-lg shadow-sm cursor-pointer hover:shadow-md transition-shadow">
-                        <div class="text-2xl font-light text-green-600">{{ homeData.counts.finished || 0 }}</div>
+                        <div class="text-2xl font-light text-green-600">{{ homeData.current_year_record.count || 0 }}</div>
                         <div class="text-sm text-gray-600">Read</div>
                     </div>
                     <div @click="navigate('/page/books?status=reading')"
