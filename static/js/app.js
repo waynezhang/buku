@@ -407,7 +407,7 @@ const BooksList = {
     const books = ref([]);
     const allBooks = ref([]);
     const loading = ref(true);
-    const currentStatus = ref(props.status || 'to-read');
+    const currentStatus = ref(props.status || 'all');
     const searchQuery = ref('');
 
     const fetchBooks = async (status = null) => {
@@ -463,15 +463,8 @@ const BooksList = {
   },
   template: `
         <div>
-            <div class="flex justify-between items-center mb-4">
+            <div class="mb-4">
                 <h2 class="text-lg font-medium">{{ getStatusLabel(currentStatus) }} <span class="text-sm text-gray-500 font-normal">({{ books.length }})</span></h2>
-                <button @click="navigate('/page/book/new')" 
-                        class="bg-indigo-600 text-white px-3 py-1.5 rounded-md hover:bg-indigo-700 text-sm flex items-center gap-1.5">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                    </svg>
-                    Add
-                </button>
             </div>
             
             <!-- Search and Filter -->
@@ -538,14 +531,14 @@ const BooksList = {
                      @click="navigate(\`/page/book/\${book.id}\`)">
                     <h3 class="font-normal">{{ book.title }}</h3>
                     <p class="text-sm text-gray-600">{{ book.author }}</p>
-                    <div class="flex justify-between items-center mt-2">
-                        <span class="text-xs px-2 py-1 rounded" 
+                    <div class="flex justify-between items-center mt-3">
+                        <span class="text-xs font-medium px-3 py-1 rounded-lg"
                               :class="{
-                                  'bg-green-100 text-green-800': book.status === 'read',
-                                  'bg-blue-100 text-blue-800': book.status === 'reading',
-                                  'bg-yellow-100 text-yellow-800': book.status === 'to-read'
+                                  'bg-green-100 text-green-700': book.status === 'read',
+                                  'bg-blue-100 text-blue-700': book.status === 'reading',
+                                  'bg-yellow-100 text-yellow-700': book.status === 'to-read'
                               }">
-                            {{ book.status.replace('-', ' ') }}
+                            {{ book.status === 'to-read' ? 'To Read' : book.status === 'reading' ? 'Reading' : 'Read' }}
                         </span>
                         <span class="text-xs text-gray-500">{{ formatDate(book.finished_at || book.started_at) }}</span>
                     </div>
@@ -927,6 +920,16 @@ const BookEdit = {
       showSearchResults.value = false;
     };
 
+    const cancelEdit = () => {
+      if (props.bookId) {
+        // If editing an existing book, go back to that book's detail view
+        router.push(`/page/book/${props.bookId}`);
+      } else {
+        // If creating a new book, go back to books list
+        router.push('/page/books');
+      }
+    };
+
     onMounted(() => {
       fetchBook();
       fetchAuthorsAndSeries();
@@ -936,7 +939,7 @@ const BookEdit = {
       book, loading, saving, saveBook, searchGoogleBooks, router,
       searching, searchResults, showSearchResults, lastSearchQuery, selectGoogleBook, closeSearchResults,
       filteredAuthors, filteredSeries, showAuthorDropdown, showSeriesDropdown,
-      selectAuthor, selectSeries, onAuthorInput, onSeriesInput
+      selectAuthor, selectSeries, onAuthorInput, onSeriesInput, cancelEdit
     };
   },
   template: `
@@ -1052,7 +1055,7 @@ const BookEdit = {
                 </div>
                 
                 <div class="flex justify-between">
-                    <button type="button" @click="router.push('/page/books')"
+                    <button type="button" @click="cancelEdit"
                             class="bg-gray-600 text-white px-3 py-1.5 rounded-md hover:bg-gray-700 text-sm">
                         Cancel
                     </button>
@@ -2029,7 +2032,7 @@ const App = {
       const path = currentRoute.value;
       const params = routeParams.value;
 
-      if (path === '/page/books') return { status: params.status || 'to-read' };
+      if (path === '/page/books') return { status: params.status };
       if (path === '/page/backlog') return { status: 'to-read' };
       if (path === '/page/book/new') return {}; // For new book, don't pass bookId
       if (path.startsWith('/page/book/') && path.endsWith('/edit')) return { bookId: params.id };
@@ -2044,6 +2047,10 @@ const App = {
       return {};
     });
 
+    const navigate = (path) => {
+      router.push(path);
+    };
+
     return {
       currentRoute,
       currentComponent,
@@ -2052,7 +2059,8 @@ const App = {
       isCheckingAuth,
       showUpdatePrompt,
       handleUpdate,
-      dismissUpdate
+      dismissUpdate,
+      navigate
     };
   },
   template: `
@@ -2066,6 +2074,17 @@ const App = {
             <Header :currentPath="currentRoute" :isAuthenticated="isAuthenticated" />
             <component :is="currentComponent" v-bind="componentProps" />
             <Footer />
+            
+            <!-- Floating Action Button -->
+            <div class="fixed bottom-6 right-6 z-40">
+                <button @click="navigate('/page/book/new')" 
+                        class="w-14 h-14 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center group"
+                        title="Add Book">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                </button>
+            </div>
             
             <!-- PWA Update Prompt -->
             <div v-if="showUpdatePrompt" class="fixed bottom-4 left-4 right-4 max-w-sm mx-auto bg-blue-600 text-white p-4 rounded-lg shadow-lg z-50">
