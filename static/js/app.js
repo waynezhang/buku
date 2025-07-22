@@ -347,16 +347,16 @@ const Home = {
         <div v-if="loading" class="text-center py-8">Loading...</div>
         <div v-else-if="homeData && homeData.counts" class="space-y-8">
             <div>
-                <h2 class="text-xl font-medium mb-4">Statistics</h2>
+                <h2 class="text-lg font-medium mb-3">Statistics</h2>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div @click="navigate('/page/books?status=all')"
                          class="bg-white p-4 rounded-lg shadow-sm cursor-pointer hover:shadow-md transition-shadow">
-                        <div class="text-2xl font-light">{{ homeData.counts.total || 0 }}</div>
+                        <div class="text-2xl font-light">{{ (homeData.counts.to_read + homeData.counts.reading + homeData.counts.finished) || 0 }}</div>
                         <div class="text-sm text-gray-600">Total Books</div>
                     </div>
                     <div @click="navigate('/page/books?status=read')"
                          class="bg-white p-4 rounded-lg shadow-sm cursor-pointer hover:shadow-md transition-shadow">
-                        <div class="text-2xl font-light text-green-600">{{ homeData.counts.read || 0 }}</div>
+                        <div class="text-2xl font-light text-green-600">{{ homeData.counts.finished || 0 }}</div>
                         <div class="text-sm text-gray-600">Read</div>
                     </div>
                     <div @click="navigate('/page/books?status=reading')"
@@ -373,7 +373,7 @@ const Home = {
             </div>
             
             <div v-if="homeData.reading_books && homeData.reading_books.length > 0">
-                <h2 class="text-xl font-medium mb-4">Reading</h2>
+                <h2 class="text-lg font-medium mb-3">Reading</h2>
                 <div class="space-y-3">
                     <div v-for="book in homeData.reading_books" :key="book.id" 
                          class="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer"
@@ -386,7 +386,7 @@ const Home = {
             </div>
             
             <div v-if="homeData.year_records && homeData.year_records.length > 0">
-                <h2 class="text-xl font-medium mb-4">By Year</h2>
+                <h2 class="text-lg font-medium mb-3">By Year</h2>
                 <div class="bg-white p-6 rounded-lg shadow-sm">
                     <div class="h-64 w-full">
                         <canvas ref="chartCanvas"></canvas>
@@ -405,19 +405,34 @@ const BooksList = {
   props: ['status'],
   setup(props) {
     const books = ref([]);
+    const allBooks = ref([]);
     const loading = ref(true);
     const currentStatus = ref(props.status || 'to-read');
+    const searchQuery = ref('');
 
     const fetchBooks = async (status = null) => {
       try {
         loading.value = true;
         const statusToUse = status || currentStatus.value;
         const url = (statusToUse && statusToUse !== 'all') ? `/api/books/${statusToUse}.json` : '/api/books.json';
-        books.value = await $json(url);
+        allBooks.value = await $json(url);
+        filterBooks();
       } catch (error) {
         console.error('Error fetching books:', error);
       } finally {
         loading.value = false;
+      }
+    };
+
+    const filterBooks = () => {
+      if (!searchQuery.value.trim()) {
+        books.value = allBooks.value;
+      } else {
+        const query = searchQuery.value.toLowerCase();
+        books.value = allBooks.value.filter(book => 
+          book.title.toLowerCase().includes(query) || 
+          book.author.toLowerCase().includes(query)
+        );
       }
     };
 
@@ -428,6 +443,10 @@ const BooksList = {
     const changeStatus = (newStatus) => {
       currentStatus.value = newStatus;
       fetchBooks(newStatus);
+      
+      // Update URL to reflect the current status
+      const newUrl = newStatus === 'all' ? '/page/books' : `/page/books?status=${newStatus}`;
+      router.push(newUrl);
     };
 
     const getStatusLabel = (status) => {
@@ -440,12 +459,12 @@ const BooksList = {
 
     onMounted(() => fetchBooks());
 
-    return { books, loading, formatDate, navigate, currentStatus, changeStatus, getStatusLabel };
+    return { books, loading, formatDate, navigate, currentStatus, changeStatus, getStatusLabel, searchQuery, filterBooks };
   },
   template: `
         <div>
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-xl font-medium">{{ getStatusLabel(currentStatus) }}</h2>
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-medium">{{ getStatusLabel(currentStatus) }} <span class="text-sm text-gray-500 font-normal">({{ books.length }})</span></h2>
                 <button @click="navigate('/page/book/new')" 
                         class="bg-indigo-600 text-white px-3 py-1.5 rounded-md hover:bg-indigo-700 text-sm flex items-center gap-1.5">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -455,28 +474,56 @@ const BooksList = {
                 </button>
             </div>
             
-            <!-- Status Filter -->
-            <div class="mb-6">
-                <div class="grid grid-cols-2 gap-2 sm:flex sm:gap-2">
+            <!-- Search and Filter -->
+            <div class="mb-6 space-y-4">
+                <!-- Search Box -->
+                <div class="relative">
+                    <input v-model="searchQuery" @input="filterBooks" 
+                           type="text" 
+                           placeholder="Search books by title or author..." 
+                           class="w-full pl-10 pr-12 py-3 text-sm bg-white border border-gray-200 rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                    <button v-if="searchQuery" @click="searchQuery = ''; filterBooks()" 
+                            class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                <!-- Filter Chips -->
+                <div class="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+                    <button @click="changeStatus('all')" 
+                            class="flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all"
+                            :class="currentStatus === 'all' 
+                                ? 'bg-indigo-100 text-indigo-800 border border-indigo-200 shadow-sm' 
+                                : 'bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200'">
+                        📋 All
+                    </button>
                     <button @click="changeStatus('to-read')" 
-                            class="px-2 sm:px-3 py-1.5 rounded-md text-xs sm:text-sm transition-colors text-center"
-                            :class="currentStatus === 'to-read' ? 'bg-yellow-100 text-yellow-800 border border-yellow-300' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'">
+                            class="flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all"
+                            :class="currentStatus === 'to-read' 
+                                ? 'bg-yellow-100 text-yellow-800 border border-yellow-200 shadow-sm' 
+                                : 'bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200'">
                         📚 To Read
                     </button>
                     <button @click="changeStatus('reading')" 
-                            class="px-2 sm:px-3 py-1.5 rounded-md text-xs sm:text-sm transition-colors text-center"
-                            :class="currentStatus === 'reading' ? 'bg-blue-100 text-blue-800 border border-blue-300' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'">
+                            class="flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all"
+                            :class="currentStatus === 'reading' 
+                                ? 'bg-blue-100 text-blue-800 border border-blue-200 shadow-sm' 
+                                : 'bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200'">
                         📖 Reading
                     </button>
                     <button @click="changeStatus('read')" 
-                            class="px-2 sm:px-3 py-1.5 rounded-md text-xs sm:text-sm transition-colors text-center"
-                            :class="currentStatus === 'read' ? 'bg-green-100 text-green-800 border border-green-300' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'">
+                            class="flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all"
+                            :class="currentStatus === 'read' 
+                                ? 'bg-green-100 text-green-800 border border-green-200 shadow-sm' 
+                                : 'bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200'">
                         ✅ Read
-                    </button>
-                    <button @click="changeStatus('all')" 
-                            class="px-2 sm:px-3 py-1.5 rounded-md text-xs sm:text-sm transition-colors text-center"
-                            :class="currentStatus === 'all' ? 'bg-gray-100 text-gray-800 border border-gray-300' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'">
-                        📋 All Books
                     </button>
                 </div>
             </div>
@@ -1023,16 +1070,30 @@ const BookEdit = {
 const Authors = {
   setup() {
     const authors = ref([]);
+    const allAuthors = ref([]);
     const loading = ref(true);
+    const searchQuery = ref('');
 
     const fetchAuthors = async () => {
       try {
         loading.value = true;
-        authors.value = await $json('/api/authors.json');
+        allAuthors.value = await $json('/api/authors.json');
+        filterAuthors();
       } catch (error) {
         console.error('Error fetching authors:', error);
       } finally {
         loading.value = false;
+      }
+    };
+
+    const filterAuthors = () => {
+      if (!searchQuery.value.trim()) {
+        authors.value = allAuthors.value;
+      } else {
+        const query = searchQuery.value.toLowerCase();
+        authors.value = allAuthors.value.filter(author => 
+          author.name.toLowerCase().includes(query)
+        );
       }
     };
 
@@ -1042,14 +1103,32 @@ const Authors = {
 
     onMounted(fetchAuthors);
 
-    return { authors, loading, navigate };
+    return { authors, loading, navigate, searchQuery, filterAuthors };
   },
   template: `
         <div>
-            <div class="flex items-center justify-between mb-8">
-                <h2 class="text-xl font-medium">Authors</h2>
-                <div class="text-sm text-gray-500">
-                    {{ authors.length }} authors
+            <div class="mb-4">
+                <h2 class="text-lg font-medium">Authors <span class="text-sm text-gray-500 font-normal">({{ authors.length }})</span></h2>
+            </div>
+            
+            <!-- Search Box -->
+            <div class="mb-4">
+                <div class="relative">
+                    <input v-model="searchQuery" @input="filterAuthors" 
+                           type="text" 
+                           placeholder="Search authors..." 
+                           class="w-full pl-10 pr-10 py-2.5 text-sm bg-white border border-gray-200 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                    <button v-if="searchQuery" @click="searchQuery = ''; filterAuthors()" 
+                            class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
                 </div>
             </div>
             
@@ -1057,23 +1136,23 @@ const Authors = {
             <div v-else-if="authors.length === 0" class="text-center py-8 text-gray-500">
                 No authors found
             </div>
-            <div v-else class="space-y-3">
+            <div v-else class="space-y-2">
                 <div v-for="author in authors" :key="author.name" 
-                     class="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer border-l-4 border-indigo-200 hover:border-indigo-400"
+                     class="bg-white p-3 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer border-l-3 border-indigo-200 hover:border-indigo-400"
                      @click="navigate('/page/author/' + encodeURIComponent(author.name))">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center">
-                            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-4">
-                                <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                                <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                                 </svg>
                             </div>
                             <div>
-                                <h3 class="font-medium text-gray-900">{{ author.name }}</h3>
-                                <p class="text-sm text-gray-600">{{ author.count }} {{ author.count === 1 ? 'book' : 'books' }}</p>
+                                <h3 class="font-medium text-gray-900 text-sm">{{ author.name }}</h3>
+                                <p class="text-xs text-gray-600">{{ author.count }} {{ author.count === 1 ? 'book' : 'books' }}</p>
                             </div>
                         </div>
-                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                         </svg>
                     </div>
@@ -1087,16 +1166,30 @@ const Authors = {
 const Series = {
   setup() {
     const series = ref([]);
+    const allSeries = ref([]);
     const loading = ref(true);
+    const searchQuery = ref('');
 
     const fetchSeries = async () => {
       try {
         loading.value = true;
-        series.value = await $json('/api/series.json');
+        allSeries.value = await $json('/api/series.json');
+        filterSeries();
       } catch (error) {
         console.error('Error fetching series:', error);
       } finally {
         loading.value = false;
+      }
+    };
+
+    const filterSeries = () => {
+      if (!searchQuery.value.trim()) {
+        series.value = allSeries.value;
+      } else {
+        const query = searchQuery.value.toLowerCase();
+        series.value = allSeries.value.filter(s => 
+          s.name.toLowerCase().includes(query)
+        );
       }
     };
 
@@ -1106,14 +1199,32 @@ const Series = {
 
     onMounted(fetchSeries);
 
-    return { series, loading, navigate };
+    return { series, loading, navigate, searchQuery, filterSeries };
   },
   template: `
         <div>
-            <div class="flex items-center justify-between mb-8">
-                <h2 class="text-xl font-medium">Series</h2>
-                <div class="text-sm text-gray-500">
-                    {{ series.length }} series
+            <div class="mb-4">
+                <h2 class="text-lg font-medium">Series <span class="text-sm text-gray-500 font-normal">({{ series.length }})</span></h2>
+            </div>
+            
+            <!-- Search Box -->
+            <div class="mb-4">
+                <div class="relative">
+                    <input v-model="searchQuery" @input="filterSeries" 
+                           type="text" 
+                           placeholder="Search series..." 
+                           class="w-full pl-10 pr-10 py-2.5 text-sm bg-white border border-gray-200 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                    <button v-if="searchQuery" @click="searchQuery = ''; filterSeries()" 
+                            class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
                 </div>
             </div>
             
@@ -1121,23 +1232,23 @@ const Series = {
             <div v-else-if="series.length === 0" class="text-center py-8 text-gray-500">
                 No series found
             </div>
-            <div v-else class="space-y-3">
+            <div v-else class="space-y-2">
                 <div v-for="s in series" :key="s.name" 
-                     class="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer border-l-4 border-indigo-200 hover:border-indigo-400"
+                     class="bg-white p-3 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer border-l-3 border-indigo-200 hover:border-indigo-400"
                      @click="navigate('/page/series/' + encodeURIComponent(s.name))">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center">
-                            <div class="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center mr-4">
-                                <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center mr-3">
+                                <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
                                 </svg>
                             </div>
                             <div>
-                                <h3 class="font-medium text-gray-900">{{ s.name }}</h3>
-                                <p class="text-sm text-gray-600">{{ s.count }} {{ s.count === 1 ? 'book' : 'books' }}</p>
+                                <h3 class="font-medium text-gray-900 text-sm">{{ s.name }}</h3>
+                                <p class="text-xs text-gray-600">{{ s.count }} {{ s.count === 1 ? 'book' : 'books' }}</p>
                             </div>
                         </div>
-                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                         </svg>
                     </div>
@@ -1174,7 +1285,7 @@ const Admin = {
   },
   template: `
         <div class="space-y-6">
-            <h2 class="text-xl font-medium">Admin</h2>
+            <h2 class="text-lg font-medium">Admin</h2>
             
             <div class="bg-white p-6 rounded-lg shadow-sm space-y-4">
                 <div>
@@ -1690,10 +1801,9 @@ const YearBooks = {
   },
   template: `
         <div>
-            <div class="mb-6">
-                <h1 class="text-2xl font-light">
-                    {{ year }}
-                    <span class="text-sm text-gray-400 font-normal ml-2">({{ books.length }})</span>
+            <div class="mb-4">
+                <h1 class="text-lg font-medium">
+                    {{ year }} <span class="text-sm text-gray-500 font-normal">({{ books.length }})</span>
                 </h1>
             </div>
             
