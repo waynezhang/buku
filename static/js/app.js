@@ -2013,32 +2013,32 @@ const Login = {
     return { username, password, loading, error, login, handleSubmit };
   },
   template: `
-        <div class="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+        <div class="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
             <div class="w-full max-w-sm mx-auto">
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 sm:p-8">
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 sm:p-8">
                     <div class="text-center mb-8">
-                        <h1 class="text-2xl font-light text-gray-900">buku</h1>
-                        <p class="text-sm text-gray-500 mt-2">Sign in to continue</p>
+                        <h1 class="text-2xl font-light text-gray-900 dark:text-gray-100">buku</h1>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">Sign in to continue</p>
                     </div>
                     
                     <form @submit="handleSubmit" class="space-y-6">
                         <div>
                             <input v-model="username" id="username" type="text" required
                                    placeholder="Username"
-                                   class="w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm placeholder-gray-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 transition-colors">
+                                   class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 px-4 py-3 text-sm placeholder-gray-400 dark:placeholder-gray-500 focus:border-indigo-400 dark:focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-900 transition-colors">
                         </div>
                         <div>
                             <input v-model="password" id="password" type="password" required
                                    placeholder="Password"
-                                   class="w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm placeholder-gray-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 transition-colors">
+                                   class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 px-4 py-3 text-sm placeholder-gray-400 dark:placeholder-gray-500 focus:border-indigo-400 dark:focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-900 transition-colors">
                         </div>
 
-                        <div v-if="error" class="text-red-500 text-sm text-center bg-red-50 rounded-lg py-2">
+                        <div v-if="error" class="text-red-500 dark:text-red-400 text-sm text-center bg-red-50 dark:bg-red-900/20 rounded-lg py-2">
                             {{ error }}
                         </div>
 
                         <button type="submit" :disabled="loading"
-                                class="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 text-sm font-medium transition-colors">
+                                class="w-full bg-indigo-600 dark:bg-indigo-500 text-white py-3 px-4 rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-50 text-sm font-medium transition-colors">
                             {{ loading ? 'Signing in...' : 'Sign in' }}
                         </button>
                     </form>
