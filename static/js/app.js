@@ -509,6 +509,9 @@ const BooksList = {
     const searchQuery = ref('');
     const yearRecords = ref([]);
     const selectedYear = ref('all');
+    const sortBy = ref('title');
+    const sortOrder = ref('asc');
+    const showSortDropdown = ref(false);
 
     const fetchBooks = async (status = null) => {
       try {
@@ -531,6 +534,38 @@ const BooksList = {
       } catch (error) {
         console.error('Error fetching year records:', error);
       }
+    };
+
+    const sortBooks = (bookList) => {
+      return bookList.sort((a, b) => {
+        let aVal, bVal;
+        
+        switch (sortBy.value) {
+          case 'title':
+            aVal = a.title.toLowerCase();
+            bVal = b.title.toLowerCase();
+            break;
+          case 'author':
+            aVal = a.author ? a.author.toLowerCase() : '';
+            bVal = b.author ? b.author.toLowerCase() : '';
+            break;
+          case 'finished_date':
+            aVal = a.finished_at ? new Date(a.finished_at) : new Date(0);
+            bVal = b.finished_at ? new Date(b.finished_at) : new Date(0);
+            break;
+          case 'created_date':
+            aVal = a.created_at ? new Date(a.created_at) : new Date(0);
+            bVal = b.created_at ? new Date(b.created_at) : new Date(0);
+            break;
+          default:
+            aVal = a.title.toLowerCase();
+            bVal = b.title.toLowerCase();
+        }
+        
+        if (aVal < bVal) return sortOrder.value === 'asc' ? -1 : 1;
+        if (aVal > bVal) return sortOrder.value === 'asc' ? 1 : -1;
+        return 0;
+      });
     };
 
     const filterBooks = () => {
@@ -557,6 +592,9 @@ const BooksList = {
         });
       }
       
+      // Sort the filtered books
+      filteredBooks = sortBooks([...filteredBooks]);
+      
       books.value = filteredBooks;
     };
 
@@ -577,6 +615,36 @@ const BooksList = {
     const changeYear = (year) => {
       selectedYear.value = year;
       filterBooks();
+    };
+
+    const changeSortBy = (newSortBy) => {
+      if (sortBy.value === newSortBy) {
+        // Toggle sort order if same field
+        sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
+      } else {
+        // New field, default to ascending
+        sortBy.value = newSortBy;
+        sortOrder.value = 'asc';
+      }
+      showSortDropdown.value = false;
+      filterBooks();
+    };
+
+    const getSortLabel = (field) => {
+      const labels = {
+        'title': 'Title',
+        'author': 'Author',
+        'finished_date': 'Finished Date',
+        'created_date': 'Created Date'
+      };
+      return labels[field];
+    };
+
+    const getBookDateDisplay = (book) => {
+      if (book.status === 'read' && book.finished_at) {
+        return formatDate(book.finished_at);
+      }
+      return '';
     };
 
     const getStatusLabel = (status) => {
@@ -602,7 +670,8 @@ const BooksList = {
 
     return { 
       books, loading, formatDate, navigate, currentStatus, changeStatus, getStatusLabel, 
-      searchQuery, filterBooks, yearRecords, selectedYear, changeYear 
+      searchQuery, filterBooks, yearRecords, selectedYear, changeYear,
+      sortBy, sortOrder, showSortDropdown, changeSortBy, getSortLabel, getBookDateDisplay
     };
   },
   template: `
@@ -613,8 +682,9 @@ const BooksList = {
             
             <!-- Search and Filter -->
             <div class="mb-6 space-y-4">
-                <!-- Search Box -->
-                <div class="relative">
+                <!-- Search Box and Sort -->
+                <div class="flex gap-3">
+                    <div class="relative flex-1">
                     <input v-model="searchQuery" @input="filterBooks" 
                            type="text" 
                            placeholder="Search books by title or author..." 
@@ -630,6 +700,54 @@ const BooksList = {
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
                     </button>
+                    </div>
+                    
+                    <!-- Sort Dropdown -->
+                    <div class="relative">
+                        <button @click="showSortDropdown = !showSortDropdown" 
+                                class="flex items-center justify-center w-12 h-12 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-xl shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-gray-700 dark:text-gray-300">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"></path>
+                            </svg>
+                        </button>
+                        
+                        <!-- Sort Dropdown Menu -->
+                        <div v-if="showSortDropdown" 
+                             class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg z-10 py-1">
+                            <button @click="changeSortBy('title')" 
+                                    class="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center justify-between"
+                                    :class="sortBy === 'title' ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900' : 'text-gray-700 dark:text-gray-300'">
+                                <span>Title</span>
+                                <span v-if="sortBy === 'title'" class="text-xs">
+                                    {{ sortOrder === 'asc' ? '↑' : '↓' }}
+                                </span>
+                            </button>
+                            <button @click="changeSortBy('author')" 
+                                    class="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center justify-between"
+                                    :class="sortBy === 'author' ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900' : 'text-gray-700 dark:text-gray-300'">
+                                <span>Author</span>
+                                <span v-if="sortBy === 'author'" class="text-xs">
+                                    {{ sortOrder === 'asc' ? '↑' : '↓' }}
+                                </span>
+                            </button>
+                            <button @click="changeSortBy('finished_date')" 
+                                    class="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center justify-between"
+                                    :class="sortBy === 'finished_date' ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900' : 'text-gray-700 dark:text-gray-300'">
+                                <span>Finished Date</span>
+                                <span v-if="sortBy === 'finished_date'" class="text-xs">
+                                    {{ sortOrder === 'asc' ? '↑' : '↓' }}
+                                </span>
+                            </button>
+                            <button @click="changeSortBy('created_date')" 
+                                    class="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center justify-between"
+                                    :class="sortBy === 'created_date' ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900' : 'text-gray-700 dark:text-gray-300'">
+                                <span>Created Date</span>
+                                <span v-if="sortBy === 'created_date'" class="text-xs">
+                                    {{ sortOrder === 'asc' ? '↑' : '↓' }}
+                                </span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 
                 <!-- Filter Chips -->
@@ -704,7 +822,7 @@ const BooksList = {
                               }">
                             {{ book.status === 'to-read' ? 'To Read' : book.status === 'reading' ? 'Reading' : 'Read' }}
                         </span>
-                        <span class="text-xs text-gray-500 dark:text-gray-400">{{ formatDate(book.finished_at || book.started_at) }}</span>
+                        <span class="text-xs text-gray-400 dark:text-gray-500">{{ getBookDateDisplay(book) }}</span>
                     </div>
                 </div>
             </div>
@@ -1739,12 +1857,19 @@ const AuthorBooks = {
       }
     };
 
+    const getBookDateDisplay = (book) => {
+      if (book.status === 'read' && book.finished_at) {
+        return formatDate(book.finished_at);
+      }
+      return '';
+    };
+
     onMounted(fetchAuthorBooks);
 
     return {
       books, loading, navigate, formatDate,
       showRenameModal, newAuthorName, renaming,
-      openRenameModal, closeRenameModal, renameAuthor
+      openRenameModal, closeRenameModal, renameAuthor, getBookDateDisplay
     };
   },
   template: `
@@ -1787,7 +1912,7 @@ const AuthorBooks = {
                               }">
                             {{ book.status.replace('-', ' ') }}
                         </span>
-                        <span class="text-xs text-gray-500 dark:text-gray-400">{{ formatDate(book.finished_at || book.started_at) }}</span>
+                        <span class="text-xs text-gray-400 dark:text-gray-500">{{ getBookDateDisplay(book) }}</span>
                     </div>
                 </div>
             </div>
@@ -1885,12 +2010,19 @@ const SeriesBooks = {
       }
     };
 
+    const getBookDateDisplay = (book) => {
+      if (book.status === 'read' && book.finished_at) {
+        return formatDate(book.finished_at);
+      }
+      return '';
+    };
+
     onMounted(fetchSeriesBooks);
 
     return {
       books, loading, navigate, formatDate,
       showRenameModal, newSeriesName, renaming,
-      openRenameModal, closeRenameModal, renameSeries
+      openRenameModal, closeRenameModal, renameSeries, getBookDateDisplay
     };
   },
   template: `
@@ -1933,7 +2065,7 @@ const SeriesBooks = {
                               }">
                             {{ book.status.replace('-', ' ') }}
                         </span>
-                        <span class="text-xs text-gray-500 dark:text-gray-400">{{ formatDate(book.finished_at || book.started_at) }}</span>
+                        <span class="text-xs text-gray-400 dark:text-gray-500">{{ getBookDateDisplay(book) }}</span>
                     </div>
                 </div>
             </div>
