@@ -12,18 +12,25 @@ import (
 var store *session.Store
 
 // Authentication middleware
-func requireAuth(c *fiber.Ctx) error {
-	sess, err := store.Get(c)
-	if err != nil {
-		return c.Status(401).JSON(fiber.Map{"ok": false, "message": "Authentication required"})
-	}
+func requireAuth(cfg *config.Config) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		// Skip authentication if disabled
+		if cfg.AuthDisabled {
+			return c.Next()
+		}
 
-	authenticated := sess.Get("authenticated")
-	if authenticated != true {
-		return c.Status(401).JSON(fiber.Map{"ok": false, "message": "Authentication required"})
-	}
+		sess, err := store.Get(c)
+		if err != nil {
+			return c.Status(401).JSON(fiber.Map{"ok": false, "message": "Authentication required"})
+		}
 
-	return c.Next()
+		authenticated := sess.Get("authenticated")
+		if authenticated != true {
+			return c.Status(401).JSON(fiber.Map{"ok": false, "message": "Authentication required"})
+		}
+
+		return c.Next()
+	}
 }
 
 func Load(cfg *config.Config, db *gorm.DB) *fiber.App {
@@ -46,11 +53,11 @@ func Load(cfg *config.Config, db *gorm.DB) *fiber.App {
 		return apiLogout(c)
 	})
 	f.Get("/api/auth/check", func(c *fiber.Ctx) error {
-		return apiCheckAuth(c)
+		return apiCheckAuth(c, cfg)
 	})
 
 	// Protected API routes
-	api := f.Group("/api", requireAuth)
+	api := f.Group("/api", requireAuth(cfg))
 
 	api.Get("/home.json", func(c *fiber.Ctx) error {
 		return apiHome(c, db)

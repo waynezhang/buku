@@ -54,7 +54,15 @@ func apiLogout(c *fiber.Ctx) error {
 	return renderJSONOKMessage(c)
 }
 
-func apiCheckAuth(c *fiber.Ctx) error {
+func apiCheckAuth(c *fiber.Ctx, cfg *config.Config) error {
+	// If auth is disabled, always return authenticated
+	if cfg.AuthDisabled {
+		return c.JSON(fiber.Map{
+			"authenticated": true,
+			"username":      "guest",
+		})
+	}
+
 	sess, err := store.Get(c)
 	if err != nil {
 		return c.JSON(fiber.Map{"authenticated": false})
