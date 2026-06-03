@@ -8,12 +8,13 @@ import (
 )
 
 type Config struct {
-	DatabasePath string
-	Debug        bool
-	ListenPort   string
-	Username     string
-	Password     string
-	AuthDisabled bool
+	DatabasePath      string
+	Debug             bool
+	ListenPort        string
+	Username          string
+	Password          string
+	AuthDisabled      bool
+	GoogleBooksAPIKey string
 }
 
 func Load() *Config {
@@ -28,9 +29,10 @@ func Load() *Config {
 		DatabasePath: getEnv("DB_PATH", "./db.sqlite"),
 		Debug:        getEnv("DEBUG", "false") == "true",
 		ListenPort:   getEnv("LISTEN_PORT", ":9000"),
-		Username:     getEnv("BUKU_USERNAME", "admin"),
-		Password:     getEnv("BUKU_PASSWORD", "password"),
-		AuthDisabled: authDisabled,
+		Username:          getEnv("BUKU_USERNAME", "admin"),
+		Password:          getEnv("BUKU_PASSWORD", "password"),
+		AuthDisabled:      authDisabled,
+		GoogleBooksAPIKey: getEnv("GOOGLE_BOOKS_API_KEY", ""),
 	}
 	log.Debugf("Config: DatabasePath=%s, Debug=%t, ListenPort=%s, Username=%s, AuthDisabled=%t",
 		config.DatabasePath, config.Debug, config.ListenPort, config.Username, config.AuthDisabled)

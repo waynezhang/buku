@@ -99,7 +99,7 @@ func Load(cfg *config.Config, db *gorm.DB) *fiber.App {
 
 	// google book
 	api.Get("/google_book_search.json", func(c *fiber.Ctx) error {
-		return apiGoogleBookSearch(c)
+		return apiGoogleBookSearch(c, cfg)
 	})
 
 	// authors

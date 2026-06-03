@@ -57,13 +57,17 @@ func (v *volume) ISBN() string {
 	return ""
 }
 
-func Search(query string, maxResults string) []Book {
+func Search(query string, maxResults string, apiKey string) []Book {
 	size, _ := strconv.Atoi(maxResults)
 	if size == 0 {
 		size = 10
 	}
+	qs := fmt.Sprintf("maxResults=%d&q=%s", size, url.QueryEscape(query))
+	if apiKey != "" {
+		qs += "&key=" + url.QueryEscape(apiKey)
+	}
 	agent := fiber.AcquireClient().Get("https://www.googleapis.com/books/v1/volumes")
-	agent.QueryString(fmt.Sprintf("maxResults=%d&q=%s", size, url.QueryEscape(query)))
+	agent.QueryString(qs)
 	_, body, _ := agent.Bytes()
 
 	results := response{}
